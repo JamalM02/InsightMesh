@@ -1,0 +1,59 @@
+openapi: 3.0.0
+paths:
+  /api/events:
+    post:
+      operationId: Create_Event_v1
+      summary: Create a new event
+      description: Creates a new event with the specified type and data
+      tags:
+        - Events
+      security:
+        - x-api-key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEventRequest"
+      responses:
+        "201":
+          description: Event created successfully
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized - Invalid API key
+        "500":
+          description: Internal server error
+info:
+  title: Events API
+  description: ""
+  version: "1.0"
+  contact: {}
+tags: []
+servers:
+  - url: http://dirdok.y2025.kinneret.cc/gateway
+components:
+  securitySchemes:
+    x-api-key:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key for authentication
+  schemas:
+    CreateEventRequest:
+      type: object
+      required:
+        - type
+        - data
+      properties:
+        type:
+          type: string
+          description: The type of event being created
+          example: "user.created"
+        data:
+          type: object
+          description: Additional data associated with the event
+          example:
+            userId: "user-789"
+            email: "user@example.com"
+            registeredAt: "2025-04-20T12:30:45Z"

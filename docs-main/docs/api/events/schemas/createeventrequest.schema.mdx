@@ -1,0 +1,33 @@
+---
+id: createeventrequest
+title: "CreateEventRequest"
+description: ""
+sidebar_label: "CreateEventRequest"
+hide_title: true
+hide_table_of_contents: true
+schema: true
+sample: {"type":"user.created","data":{"userId":"user-789","email":"user@example.com","registeredAt":"2025-04-20T12:30:45Z"}}
+custom_edit_url: null
+---
+
+import Schema from "@theme/Schema";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"CreateEventRequest"}
+>
+</Heading>
+
+
+
+
+
+<Schema
+  schema={{"type":"object","required":["type","data"],"properties":{"type":{"type":"string","description":"The type of event being created","example":"user.created"},"data":{"type":"object","description":"Additional data associated with the event","example":{"userId":"user-789","email":"user@example.com","registeredAt":"2025-04-20T12:30:45Z"}}},"title":"CreateEventRequest"}}
+  schemaType={"response"}
+>
+  
+</Schema>
+            
