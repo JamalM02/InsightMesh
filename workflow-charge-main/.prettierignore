@@ -1,0 +1,17 @@
+# Build output
+dist/
+
+# Node modules
+node_modules/
+
+
+# Coverage reports
+coverage/
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.*
