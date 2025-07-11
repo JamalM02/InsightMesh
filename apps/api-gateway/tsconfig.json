@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ES2024",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "strict": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "strictNullChecks": true,
+    "baseUrl": "./",
+    "typeRoots": ["./node_modules/@types",
+      "./types.d.ts"
+    ],
+    "paths": {
+      "@libs/*": ["src/libs/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@middleware": ["src/middleware"],
+      "@routes/*": ["src/routes/*"],
+      "@insightmesh/node-common/*": ["../../packages/node-common/src/*"],
+      "@insightmesh/grpc-account/*": ["../../packages/grpc-account/src/*"],
+      "@insightmesh/grpc-events/*": ["../../packages/grpc-events/src/*"]
+    }
+  },
+  "include": ["src/**/*",
+    "types.d.ts"
+  ],
+  "exclude": ["node_modules", "dist"],
+  "ts-node": {
+    "files": true
+  }
+}
