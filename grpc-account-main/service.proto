@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package account;
+
+service AccountService {
+  rpc CreateAccount(CreateAccountRequest) returns (Account);
+  rpc ValidateApiKey(ValidateApiKeyRequest) returns (Account);
+  rpc RevealApiKey(RevealApiKeyRequest) returns (RevealApiKeyResponse);
+  rpc MonthlyBilling(SummarizePeriodUsageRequest)
+      returns (SummarizePeriodUsageResponse);
+  rpc UpdateBillingStatus(UpdateBillingRequest) returns (UpdateBillingResponse);
+  rpc GetAccount(GetAccountRequest) returns (Account);
+  rpc GetSecret(GetSecretRequest) returns (GetSecretResponse);
+}
+
+message CreateAccountRequest {
+  string id = 1;
+  string name = 2;
+  optional string slug = 3;
+}
+
+message GetAccountRequest { string id = 1; }
+message Account {
+  string id = 1;
+  string stripeId = 2;
+}
+
+message ValidateApiKeyRequest { string key = 1; }
+
+message RevealApiKeyRequest {
+  string accountId = 1;
+  string secretId = 2;
+}
+
+message RevealApiKeyResponse { string apiKey = 1; }
+
+message SummarizePeriodUsageRequest {
+  string appId = 1;
+  string target = 2; // ISO string
+}
+
+message SummarizePeriodUsageResponse {
+  string id = 1;
+  string appId = 2;
+  string start = 3;
+  string end = 4;
+  string credits = 5;
+}
+
+message UpdateBillingRequest {
+  string id = 1;
+  string paymentId = 2;
+  PaymentStatus paymentStatus = 3;
+}
+
+message UpdateBillingResponse {
+  string id = 1;
+  string appId = 2;
+  string start = 3;
+  string end = 4;
+  string credits = 5;
+  string paymentId = 6;
+  string paymentStatus = 7;
+  string updatedAt = 8;
+}
+
+message GetSecretRequest { string appId = 1; }
+
+message GetSecretResponse {
+  string secretId = 1;
+  string appId = 2;
+}
+
+enum PaymentStatus {
+  PS_UNKNOWN = 0;
+  PENDING = 1;
+  PAID = 2;
+  FAILED = 3;
+}
