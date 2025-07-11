@@ -1,0 +1,22 @@
+# Build output
+dist/
+
+# Generated files
+src/grpc/
+
+# Node modules
+node_modules/
+
+# Prisma
+prisma/migrations/
+
+# Coverage reports
+coverage/
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.*
