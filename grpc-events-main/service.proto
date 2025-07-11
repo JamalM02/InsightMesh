@@ -1,0 +1,23 @@
+syntax = "proto3";
+package events;
+
+import "google/protobuf/struct.proto";
+
+service EventsService {
+  rpc CreateEvent(CreateEventRequest) returns (CreateEventResponse);
+}
+
+message Empty {}
+
+message CreateEventResponse {
+  string id = 1;
+  string appId = 2;
+  string type = 3;
+  google.protobuf.Struct data = 4;
+}
+
+message CreateEventRequest {
+  string appId = 1;
+  string type = 2;
+  google.protobuf.Struct data = 3;
+}

@@ -1,0 +1,18 @@
+# Build output
+dist/
+
+# Generated files
+src/grpc/
+
+# Node modules
+node_modules/
+
+# Prisma
+prisma/migrations/
+
+# Coverage reports
+coverage/
+
+# Configuration files
+*.config.js
+.eslintrc.js
