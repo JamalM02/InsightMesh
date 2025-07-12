@@ -15,20 +15,6 @@ services:
     networks:
       - backend
 
-  grpc-webhooks:
-    build: ./packages/grpc-webhooks
-    ports:
-      - "50055:50055"
-    networks:
-      - backend
-
-  temporal:
-    image: temporalio/auto-setup
-    ports:
-      - "7233:7233"
-    networks:
-      - backend
-
   clickhouse:
     image: clickhouse/clickhouse-server
     ports:
