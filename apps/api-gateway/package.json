@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "start": "node dist/app.js",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node -r tsconfig-paths/register' src/app.ts | pino-pretty",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec \"ts-node -r tsconfig-paths/register\" src/app.ts",
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "eslint 'src/**/*.ts' --fix",
     "format": "prettier --write 'src/**/*.{ts,js,json}'"

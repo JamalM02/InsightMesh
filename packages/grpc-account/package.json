@@ -10,6 +10,7 @@
     "dev:windows": "npx nodemon --watch src --ext ts,json --exec \"npx ts-node -r tsconfig-paths/register src/app.ts\" | npx pino-pretty",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate:dev": "npx prisma migrate dev",
+    "prisma:push" : "npx prisma db push",
     "prisma:reset": "npx prisma migrate reset",
     "proto:generate": "node ../node-common/scripts/generate-proto.js",
     "postinstall": "npm run client:generate",

@@ -12,6 +12,7 @@
     "typescript": "^5.4.0"
   },
   "dependencies": {
-    "@insightmesh/grpc-events": "^1.0.0"
+    "@insightmesh/grpc-events": "^1.0.0",
+    "mongodb": "^6.17.0"
   }
 }

@@ -1,0 +1,18 @@
+npm i --legacy-peer-deps
+
+// Start the API Gateway service
+ npm run dev --workspace=apps/api-gateway
+
+// Start the gRPC Account service
+
+//for new db
+ npm run prisma:push --workspace=packages/grpc-account
+ //create client prisma
+ npm run prisma:generate --workspace=packages/grpc-account
+ npm run dev:windows --workspace=packages/grpc-account
+
+
+// Start the gRPC event service
+ npm run dev:windows --workspace=packages/grpc-events
+
+

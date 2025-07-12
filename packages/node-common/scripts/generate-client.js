@@ -141,6 +141,12 @@ function main() {
     }
 
     fs.copyFileSync(serviceSource, serviceTarget);
+    const structSource = path.join(process.cwd(), "src", "grpc", "google", "protobuf", "struct.ts");
+    if (fs.existsSync(structSource)) {
+      const structTargetDir = path.join(srcDir, "google", "protobuf");
+      fs.mkdirSync(structTargetDir, { recursive: true });
+      fs.copyFileSync(structSource, path.join(structTargetDir, "struct.ts"));
+    }
     fs.writeFileSync(path.join(srcDir, "index.ts"), generateClientIndex(serviceName));
 
     const version = getNextVersion(path.join(clientDir, "package.json"));
