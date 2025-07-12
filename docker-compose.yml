@@ -1,0 +1,57 @@
+version: '3.9'
+
+services:
+  grpc-account:
+    build: ./packages/grpc-account
+    ports:
+      - "50053:50053"
+    networks:
+      - backend
+
+  grpc-events:
+    build: ./packages/grpc-events
+    ports:
+      - "50054:50054"
+    networks:
+      - backend
+
+  grpc-webhooks:
+    build: ./packages/grpc-webhooks
+    ports:
+      - "50055:50055"
+    networks:
+      - backend
+
+  temporal:
+    image: temporalio/auto-setup
+    ports:
+      - "7233:7233"
+    networks:
+      - backend
+
+  clickhouse:
+    image: clickhouse/clickhouse-server
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    networks:
+      - backend
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    networks:
+      - backend
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    ports:
+      - "2181:2181"
+    networks:
+      - backend
+
+networks:
+  backend:
