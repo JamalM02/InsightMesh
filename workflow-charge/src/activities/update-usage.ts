@@ -1,4 +1,4 @@
-import { accountRpcClient, UpdateBillingResponse } from '@events-project/grpc-account';
+import { accountRpcClient, UpdateBillingResponse } from '@insightmesh/grpc-account';
 import Stripe from 'stripe';
 import { mapStripeToGrpcStatus } from '../lib/stripe';
 

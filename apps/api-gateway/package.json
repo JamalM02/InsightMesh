@@ -12,9 +12,9 @@
     "format": "prettier --write 'src/**/*.{ts,js,json}'"
   },
   "dependencies": {
-    "@insightmesh/node-common": "workspace:*",
-    "@insightmesh/grpc-account": "workspace:*",
-    "@insightmesh/grpc-events": "workspace:*",
+    "@insightmesh/node-common": "*",
+    "@insightmesh/grpc-account": "*",
+    "@insightmesh/grpc-events": "*",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",

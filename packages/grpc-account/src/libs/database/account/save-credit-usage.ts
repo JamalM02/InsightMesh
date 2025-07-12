@@ -1,4 +1,4 @@
-import { logger, InternalError } from '@events-project/common';
+import { logger, InternalError } from '@insightmesh/node-common';
 import { db } from '@libs/database/db';
 import { CreditUsage, UsageType } from '@prisma/client';
 

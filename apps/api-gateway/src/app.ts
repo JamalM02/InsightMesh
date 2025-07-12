@@ -1,7 +1,7 @@
 import express from 'express';
 import routes from '@routes/index';
 import { env } from '@libs/env';
-import { logger } from '@events-project/common';
+import { logger } from '@insightmesh/node-common';
 import { errorsMiddleware, loggerMiddleware } from '@middleware';
 import cors from 'cors';
 

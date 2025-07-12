@@ -1,5 +1,5 @@
 import { db } from '@libs/database/db';
-import { logger, InternalError } from '@events-project/common';
+import { logger, InternalError } from '@insightmesh/node-common';
 import { PeriodCreditUsage } from '@prisma/client';
 import { UpdateBillingParams } from '@libs/schemas/update-status'; // adjust the path if needed
 

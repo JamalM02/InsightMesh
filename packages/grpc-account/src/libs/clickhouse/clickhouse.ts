@@ -1,5 +1,5 @@
 import { createClient } from '@clickhouse/client';
-import { InternalError, logger } from '@events-project/common';
+import { InternalError, logger } from '@insightmesh/node-common';
 import { env } from '@libs/env';
 
 const client = createClient({

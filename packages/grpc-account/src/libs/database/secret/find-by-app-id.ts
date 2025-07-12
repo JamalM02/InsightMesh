@@ -1,5 +1,5 @@
 import { db } from '@libs/database/db';
-import { InternalError, logger } from '@events-project/common';
+import { InternalError, logger } from '@insightmesh/node-common';
 import { Secret } from '@prisma/client';
 
 export const findSecretByAppId = async (params: { appId: string }): Promise<Secret> => {

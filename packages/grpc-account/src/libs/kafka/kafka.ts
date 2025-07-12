@@ -1,7 +1,7 @@
 import { Kafka, logLevel } from 'kafkajs';
 import { env } from '@libs/env';
 import { handleEvent } from '@libs/kafka/event-handler';
-import { logger } from '@events-project/common';
+import { logger } from '@insightmesh/node-common';
 
 export const startKafkaConsumer = async (): Promise<void> => {
   const serviceName = env('SERVICE_NAME');

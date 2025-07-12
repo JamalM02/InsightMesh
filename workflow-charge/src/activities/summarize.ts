@@ -1,5 +1,5 @@
 import { endOfToday } from 'date-fns';
-import { accountRpcClient, SummarizePeriodUsageResponse } from '@events-project/grpc-account';
+import { accountRpcClient, SummarizePeriodUsageResponse } from '@insightmesh/grpc-account';
 
 export async function summarize({
   appId,

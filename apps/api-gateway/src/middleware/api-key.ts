@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { accountRpcClient } from '@events-project/grpc-account';
+import { accountRpcClient } from '@insightmesh/grpc-account';
 
 export const apiKeyAuth = async (
   req: Request,

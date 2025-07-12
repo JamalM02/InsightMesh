@@ -12,7 +12,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.18.0",
     "@clerk/themes": "^2.2.36",
-    "@insightmesh/grpc-account": "workspace:*",
+    "@insightmesh/grpc-account": "*",
     "@grpc/grpc-js": "^1.13.2",
     "@grpc/proto-loader": "^0.7.13",
     "@hookform/resolvers": "^5.0.1",

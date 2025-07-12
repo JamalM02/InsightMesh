@@ -1,4 +1,4 @@
-import { InternalError, logger, NotFoundError } from '@events-project/common';
+import { InternalError, logger, NotFoundError } from '@insightmesh/node-common';
 import { db } from '@libs/database/db';
 import { PeriodBillingParams } from '@libs/schemas';
 import { PeriodCreditUsage } from '@prisma/client';

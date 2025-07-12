@@ -1,4 +1,4 @@
-import { NotFoundError } from '@events-project/common';
+import { NotFoundError } from '@insightmesh/node-common';
 import { ValidateApiKeyRequest, Account } from '@grpc/service';
 import { findAccountByKey } from '@libs/database/account';
 

@@ -18,4 +18,4 @@ coverage/
 .eslintrc.js
 
 # Scripts
-scripts/
+../node-common/scripts/

@@ -4,7 +4,7 @@ import { EventsServiceDefinition } from '@grpc/service';
 import * as methods from './methods';
 import { env } from '@libs/env';
 import { kafkaProducer } from '@libs/kafka';
-import { errorHandlingMiddleware, logger } from '@events-project/common';
+import { errorHandlingMiddleware, logger } from '@insightmesh/node-common';
 
 const address = `${env('HOST')}:${env('PORT')}`;
 

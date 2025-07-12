@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2024",
     "module": "NodeNext",
@@ -12,7 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "strictNullChecks": true,
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "@libs/*": ["src/libs/*"],
       "@grpc/*": ["src/grpc/*"],

@@ -3,7 +3,7 @@
 import {
     accountRpcClient,
     RevealApiKeyRequest,
-} from "@events-project/grpc-account";
+} from "@insightmesh/grpc-account";
 
 export const revealApiKey = async (params: RevealApiKeyRequest) => {
     const result = await accountRpcClient.revealApiKey({

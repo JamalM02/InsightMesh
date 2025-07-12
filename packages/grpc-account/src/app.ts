@@ -5,7 +5,7 @@ import { AccountServiceDefinition } from '@grpc/service';
 import { db } from '@libs/database';
 import * as methods from './methods';
 import { env } from '@libs/env';
-import { errorHandlingMiddleware, logger } from '@events-project/common';
+import { errorHandlingMiddleware, logger } from '@insightmesh/node-common';
 
 const address = `${env('HOST')}:${env('PORT')}`;
 

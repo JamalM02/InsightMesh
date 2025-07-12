@@ -1,4 +1,4 @@
-import { eventsRpcClient } from '@events-project/grpc-events';
+import { eventsRpcClient } from '@insightmesh/grpc-events';
 import { Request, Response } from 'express';
 
 export const createEvent = async (req: Request, res: Response): Promise<void> => {

@@ -1,4 +1,4 @@
-import { PaymentStatus } from '@events-project/grpc-account';
+import { PaymentStatus } from '@insightmesh/grpc-account';
 import Stripe from 'stripe';
 
 export const mapStripeToGrpcStatus = (stripeStatus: Stripe.PaymentIntent.Status): PaymentStatus => {

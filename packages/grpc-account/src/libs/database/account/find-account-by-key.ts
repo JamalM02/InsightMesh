@@ -1,4 +1,4 @@
-import { InternalError, logger } from '@events-project/common';
+import { InternalError, logger } from '@insightmesh/node-common';
 import { db } from '@libs/database/db';
 import { Account } from '@prisma/client';
 import { hash } from 'encrypt-tools';

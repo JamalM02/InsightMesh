@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2024",
     "module": "NodeNext",
@@ -12,7 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "strictNullChecks": true,
-    "baseUrl": "./",
+    "baseUrl": ".",
     "typeRoots": ["./node_modules/@types",
       "./types.d.ts"
     ],
@@ -21,9 +22,9 @@
       "@controllers/*": ["src/controllers/*"],
       "@middleware": ["src/middleware"],
       "@routes/*": ["src/routes/*"],
-      "@insightmesh/node-common/*": ["../../packages/node-common/src/*"],
-      "@insightmesh/grpc-account/*": ["../../packages/grpc-account/src/*"],
-      "@insightmesh/grpc-events/*": ["../../packages/grpc-events/src/*"]
+      "@insightmesh/node-common": ["packages/node-common/src"],
+      "@insightmesh/grpc-account": ["../../packages/grpc-account/client/src"],
+      "@insightmesh/grpc-events": ["../../packages/grpc-events/client/src"]
     }
   },
   "include": ["src/**/*",

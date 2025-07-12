@@ -1,7 +1,7 @@
 import { db } from '@libs/database/db';
 import { decrypt } from 'encrypt-tools';
 import { env } from '@libs/env';
-import { NotFoundError, InternalError, logger } from '@events-project/common';
+import { NotFoundError, InternalError, logger } from '@insightmesh/node-common';
 import { RevealApiKeyParams } from '@libs/schemas';
 
 export const revealSecretByIds = async (

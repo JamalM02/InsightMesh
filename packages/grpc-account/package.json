@@ -11,17 +11,17 @@
     "prisma:generate": "npx prisma generate",
     "prisma:migrate:dev": "npx prisma migrate dev",
     "prisma:reset": "npx prisma migrate reset",
-    "proto:generate": "protoc --plugin=protoc-gen-ts_proto=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./src/grpc --ts_proto_opt=outputServices=nice-grpc,outputServices=generic-definitions,useExactTypes=false,forceLong=string --proto_path=. service.proto",
-    "proto:generatewin": "node scripts/generate-proto.js",
+    "proto:generate": "node ../node-common/scripts/generate-proto.js",
+    "postinstall": "npm run client:generate",
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "eslint 'src/**/*.ts' --fix",
     "format": "prettier --write 'src/**/*.{ts,js,json}'",
-    "client:generate": "node scripts/generate-client.js",
-    "client:publish": "bash scripts/publish-client.sh"
+    "client:generate": "node ../node-common/scripts/generate-client.js",
+    "proto:watch": "chokidar service.proto -c 'npm run client:generate'"
   },
   "dependencies": {
     "@clickhouse/client": "^1.11.1",
-    "@insightmesh/node-common": "workspace:*",
+    "@insightmesh/node-common": "*",
     "@prisma/client": "^6.5.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
@@ -47,7 +47,7 @@
     "prettier": "^3.2.5",
     "prisma": "^6.5.0",
     "ts-node": "^10.9.1",
-    "ts-proto": "^1.156.0",
+    "ts-proto": "^1.181.2",
     "tsc-alias": "^1.8.13",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2"

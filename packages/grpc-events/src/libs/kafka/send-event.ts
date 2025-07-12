@@ -1,4 +1,4 @@
-import { InternalError } from '@events-project/common';
+import { InternalError } from '@insightmesh/node-common';
 import { CreateEventRequest } from '@grpc/service';
 import { kafkaProducer } from './kafka';
 import { typeid } from 'typeid-js';

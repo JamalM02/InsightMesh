@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 import { stripe } from '../lib/stripe';
-import { toMinorUnits } from '@events-project/common';
+import { toMinorUnits } from '@insightmesh/node-common';
 
 export async function chargeCard({
   stripeId,
