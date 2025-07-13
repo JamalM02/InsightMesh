@@ -1,25 +1,24 @@
+# Base Node.js image
+FROM node:20-alpine
 
-# Use Node.js as the base image
-FROM node:20
+# Set working directory
+WORKDIR /app
 
-# Set the working directory
-WORKDIR /usr/src/app
+# Copy only grpc-account and node-common
+COPY ./packages/grpc-account ./packages/grpc-account
+COPY ./packages/node-common ./packages/node-common
 
-# Copy package files
-COPY package.json package-lock.json* ./
+# Set working directory to grpc-account
+WORKDIR /app/packages/grpc-account
 
 # Install dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
-# Copy the rest of the app
-COPY . .
+# Build TypeScript
+RUN npm run build
 
-# Compile proto files (assumes scripts.generate exists in package.json)
-RUN npm run build || true
-RUN npm run generate || true
-
-# Expose gRPC port
+# Expose gRPC port (adjust if needed)
 EXPOSE 50053
 
-# Run the gRPC server
-CMD [ "npm", "start" ]
+# Start the service
+CMD ["node", "dist/server.js"]
