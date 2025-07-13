@@ -1,4 +1,84 @@
+# Update system and install curl
+sudo apt update && sudo apt install -y curl
+
+# Install Node.js 18
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Install npm packages globally (with sudo to avoid permission errors)
+sudo npm install -g pm2 dotenv-cli
+
+# OPTIONAL: Fix npm permissions permanently (recommended by npm)
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+echo 'export PATH=$HOME/.npm-global/bin:$PATH' >> ~/.profile
+source ~/.profile
+
+# Check installations
+node -v
+npm -v
+pm2 -v
+dotenv -v
+
+# Install Docker (if not already installed)
+sudo apt install -y docker.io docker-compose
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+newgrp docker
+
+open ports
+kafka 9092
+clickhouse 8123
+grpc-account 50053
+grpc-events 50052
+
+mkdir -p packages/grpc-account/src/grpc
+
+mkdir -p packages/grpc-events/src/grpc
+
+nano packages/grpc-account/.env
+nano packages/grpc-events/.env
+
+
 npm i --legacy-peer-deps
+
+--- same for grpc-events
+cd packages/grpc-account
+npx prisma generate
+cd packages/grpc-events
+npx prisma generate
+
+-- first time db
+npm run prisma:push --workspace=packages/grpc-account
+npm run prisma:push --workspace=packages/grpc-events
+
+
+
+npm run build --workspace @insightmesh/node-common
+npm run build --workspace @insightmesh/grpc-account
+npm run build --workspace @insightmesh/grpc-events
+
+dotenv -e .env -- pm2 start npm --name "grpc-account" -- run start
+dotenv -e .env -- pm2 start npm --name "grpc-events" -- run start
+
+
+//in root pm2
+pm2 start npm --name "grpc-account" --workspace "@insightmesh/grpc-account" -- run start
+
+//inside grpc file pm2
+cd packages/grpc-account
+pm2 start npm --name "grpc-account" -- run start
+
+//log to pm2
+pm2 list
+pm2 logs grpc-account
+pm2 stop grpc-account
+pm2 delete grpc-account
+
+
+//clickhouse
+after running on docker
+run the scripts in clickhouse.sql
 
 // Start the API Gateway service
  npm run dev --workspace=apps/api-gateway
@@ -12,8 +92,7 @@ npm i --legacy-peer-deps
 
  npm run prisma:generate --workspace=packages/grpc-account
 
-  npm run build --workspace @insightmesh/node-common
-  npm run build --workspace @insightmesh/grpc-account
+
  npm run dev:windows --workspace=packages/grpc-account
 
 
@@ -21,3 +100,4 @@ npm i --legacy-peer-deps
  npm run dev:windows --workspace=packages/grpc-events
 
 
+git clone git@github.com:jamalm02/InsightMesh.git InsightMesh
