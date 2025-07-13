@@ -1,0 +1,24 @@
+{
+  "name": "@insightmesh/grpc-events",
+  "version": "1.0.0",
+  "description": "gRPC client for events",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "nice-grpc": "^2.1.0",
+    "nice-grpc-common": "^2.0.2",
+    "protobufjs": "^7.2.3",
+    "dotenv": "^16.4.7",
+    "long": "^5.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.2.2"
+  }
+}
