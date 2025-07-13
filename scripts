@@ -8,7 +8,12 @@ npm i --legacy-peer-deps
 //for new db
  npm run prisma:push --workspace=packages/grpc-account
  //create client prisma
+
+
  npm run prisma:generate --workspace=packages/grpc-account
+
+  npm run build --workspace @insightmesh/node-common
+  npm run build --workspace @insightmesh/grpc-account
  npm run dev:windows --workspace=packages/grpc-account
 
 

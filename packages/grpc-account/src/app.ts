@@ -32,9 +32,8 @@ async function startServer(): Promise<void> {
     const server = createServer().use(errorHandlingMiddleware);
     server.add(AccountServiceDefinition, methods);
     await db.$connect();
-    startKafkaConsumer().then(() => {
-      logger.debug('Kafka consumer started');
-    });
+    await startKafkaConsumer();
+    logger.debug('Kafka consumer started');
     await server.listen(address);
 
     const signals = ['SIGINT', 'SIGTERM'];

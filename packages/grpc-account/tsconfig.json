@@ -17,7 +17,7 @@
     "paths": {
       "@libs/*": ["src/libs/*"],
       "@grpc/*": ["src/grpc/*"],
-      "@insightmesh/node-common/*": ["../../packages/node-common/src/*"]
+      "@insightmesh/node-common/*": ["../../node-common/src/*"]
     }
   },
   "include": ["src/**/*"],
