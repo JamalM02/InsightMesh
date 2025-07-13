@@ -1,0 +1,5 @@
+{
+  "buildCommand": "npm run build --workspace=apps/front",
+  "outputDirectory": "apps/front/.next",
+  "installCommand": "npm install --legacy-peer-deps"
+}
