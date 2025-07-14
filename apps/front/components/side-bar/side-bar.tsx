@@ -21,7 +21,7 @@ const SideBar = () => {
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
-          {/* <NavDevelopers /> */} //TODO
+          {/* <NavDevelopers /> */} {/* TODO */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
