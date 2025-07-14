@@ -15,7 +15,7 @@ export default async function Page() {
       <h1 className={cn("text-white")}>Dashboard Page</h1>
       <iframe
         className="px-5 py-10 h-full"
-        src={process.env.NEXT_PUBLIC_METABASE_DASHBOARD_URL}
+        src={ process.env.NEXT_PUBLIC_METABASE_DASHBOARD_URL }
       />
     </>
   );
