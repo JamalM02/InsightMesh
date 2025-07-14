@@ -75,6 +75,9 @@ pm2 start npm --name "grpc-account" --workspace "@insightmesh/grpc-account" -- r
 //inside grpc file pm2
 cd packages/grpc-account
 pm2 start npm --name "grpc-account" -- run start
+cd InsightMesh
+cd packages/grpc-account
+pm2 start npm --name "grpc-events" -- run start
 
 //log to pm2
 pm2 list
