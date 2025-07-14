@@ -40,13 +40,6 @@ services:
         soft: 262144
         hard: 262144
 
-  docs:
-    build:
-      context: packages/docs
-    container_name: docs
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
 
 volumes:
   clickhouse_data:

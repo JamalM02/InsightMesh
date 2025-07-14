@@ -5,9 +5,9 @@ import type * as OpenApiPlugin from "docusaurus-plugin-openapi-docs";
 
 const config: Config = {
   future: {
-    experimental_faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
+    v4: true
   },
-  title: "Events Developer Hub",
+  title: 'InsightMesh Docs',
   tagline:
     "Welcome to the Events developer hub. You'll find comprehensive guides and documentation to help you start working with Events as quickly as possible, as well as support if you get stuck. Let's jump right in!",
   url: "https://events.com",

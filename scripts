@@ -38,7 +38,7 @@ mkdir -p packages/grpc-events/src/grpc
 nano packages/grpc-account/.env
 nano packages/grpc-events/.env
 
-npm install --workspace=packages/docs
+npm install --workspace=packages/docs --legacy-peer-deps
 npm install --workspace=packages/node-common
 npm install --workspace=packages/grpc-account
 npm install --workspace=packages/grpc-events
@@ -58,6 +58,12 @@ npm run prisma:push --workspace=packages/grpc-account
 npm run build --workspace @insightmesh/node-common
 npm run build --workspace @insightmesh/grpc-account
 npm run build --workspace @insightmesh/grpc-events
+npm run build --workspace @insightmesh/docs
+
+
+
+------------------docker up -------------------
+
 
 dotenv -e .env -- pm2 start npm --name "grpc-account" -- run start
 dotenv -e .env -- pm2 start npm --name "grpc-events" -- run start
