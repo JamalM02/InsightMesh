@@ -1,4 +1,0 @@
-{
-  "buildCommand": "cd apps/front && npm run build",
-  "outputDirectory": "apps/front/.next"
-}
