@@ -33,14 +33,16 @@ grpc-account 50053
 grpc-events 50052
 
 mkdir -p packages/grpc-account/src/grpc
-
 mkdir -p packages/grpc-events/src/grpc
 
 nano packages/grpc-account/.env
 nano packages/grpc-events/.env
 
+npm install --workspace=packages/docs
+npm install --workspace=packages/node-common
+npm install --workspace=packages/grpc-account
+npm install --workspace=packages/grpc-events
 
-npm i --legacy-peer-deps
 
 --- same for grpc-events
 cd packages/grpc-account
@@ -50,7 +52,6 @@ npx prisma generate
 
 -- first time db
 npm run prisma:push --workspace=packages/grpc-account
-npm run prisma:push --workspace=packages/grpc-events
 
 
 
@@ -100,4 +101,4 @@ run the scripts in clickhouse.sql
  npm run dev:windows --workspace=packages/grpc-events
 
 
-git clone git@github.com:jamalm02/InsightMesh.git InsightMesh
+git clone git@github.com:jamalm02/InsightMesh.git InsightMesh
