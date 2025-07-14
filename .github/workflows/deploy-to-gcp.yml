@@ -1,0 +1,30 @@
+name: Deploy to GCP VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GCP_DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H 34.57.185.235 >> ~/.ssh/known_hosts
+
+      - name: SSH and Pull from GitHub
+        run: |
+          ssh -i ~/.ssh/deploy_key jamal_majadle02@34.57.185.235 << 'EOF'
+            cd ~/InsightMesh  # Adjust if your project dir is different
+            git pull origin main
+            docker compose down
+            docker compose up -d --build
+          EOF
