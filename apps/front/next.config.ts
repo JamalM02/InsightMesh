@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const prodConfig = {
+const prodConfig: NextConfig = {
   basePath: "/app",
   trailingSlash: true,
   async redirects() {
@@ -14,6 +14,7 @@ const prodConfig = {
   },
 };
 
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig =
+    process.env.NODE_ENV === "production" ? prodConfig : {};
 
 export default nextConfig;

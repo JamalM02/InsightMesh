@@ -23,8 +23,26 @@ jobs:
       - name: SSH and Pull from GitHub
         run: |
           ssh -i ~/.ssh/deploy_key jamal_majadle02@34.57.185.235 << 'EOF'
-            cd ~/InsightMesh  # Adjust if your project dir is different
+            set -e  # Exit on error
+            cd ~/InsightMesh
             git pull origin main
             docker compose down
             docker compose up -d --build
+
+            echo "Waiting for Kafka to be ready..."
+            until docker exec kafka \
+              kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1
+            do
+              echo "Kafka not ready yet. Retrying in 3 seconds..."
+              sleep 3
+            done
+            echo "✅ Kafka is ready."
+
+            echo "Starting gRPC services with PM2..."
+            cd ~/InsightMesh/packages/grpc-account
+            pm2 start npm --name "grpc-account" -- run start
+
+            cd ~/InsightMesh/packages/grpc-events
+            pm2 start npm --name "grpc-events" -- run start
           EOF
+        
