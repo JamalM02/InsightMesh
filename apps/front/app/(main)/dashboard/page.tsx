@@ -15,7 +15,7 @@ export default async function Page() {
       <h1 className={cn("text-white")}>Dashboard Page</h1>
       <iframe
         className="px-5 py-10 h-full"
-        src="http://dirdok.y2025.kinneret.cc/metabase/public/dashboard/b6db0221-c4e1-45e7-b12f-bba490bb334c"
+        src={process.env.NEXT_PUBLIC_METABASE_DASHBOARD_URL}
       />
     </>
   );

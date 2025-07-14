@@ -85,6 +85,7 @@ pm2 delete grpc-account
 
 //clickhouse
 after running on docker
+docker exec -it clickhouse clickhouse-client
 run the scripts in clickhouse.sql
 
 // Start the API Gateway service
