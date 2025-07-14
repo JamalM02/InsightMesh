@@ -29,7 +29,7 @@ const PaymentForm = () => {
       const { error } = await stripe.confirmSetup({
         elements,
         confirmParams: {
-          return_url: "http://localhost:3001/payments",
+          return_url: "http://localhost:3000/payments",//TODO:give production url
           payment_method_data: {
             billing_details: {
               name: cardholderName,
