@@ -20,27 +20,62 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H 34.57.185.235 >> ~/.ssh/known_hosts
 
-      - name: SSH and Pull from GitHub
+      - name: SSH into VM and deploy
         run: |
           ssh -i ~/.ssh/deploy_key jamal_majadle02@34.57.185.235 << 'EOF'
+            set -e
             cd ~/InsightMesh
+
+            echo "📥 Pulling latest code..."
+            git fetch origin main
+            CHANGED=$(git diff --name-only HEAD origin/main)
             git pull origin main
-            docker compose down
-            docker compose up -d --build
 
-            echo "⏳ Waiting for Kafka to pass healthcheck..."
-            until docker exec kafka kafka-topics --bootstrap-server localhost:9092 --list > /dev/null 2>&1; do
-              echo "Kafka not ready yet. Retrying in 3 seconds..."
-              sleep 3
-            done
-            echo "✅ Kafka is healthy."
+            echo "$CHANGED" > .changed-files
 
-            # Start gRPC services
-            pm2 delete all || true
-            cd ~/InsightMesh/packages/grpc-account
-            pm2 start npm --name "grpc-account" -- run start
+            RESTART_DOCKER=false
+            RESTART_PM2=false
 
-            cd ~/InsightMesh/packages/grpc-events
-            pm2 start npm --name "grpc-events" -- run start
+            # Restart Docker AND PM2 if docker-compose.yml changed
+            if grep -q '^docker-compose\.yml$' .changed-files; then
+              RESTART_DOCKER=true
+              RESTART_PM2=true
+            fi
+
+            # Restart ONLY PM2 if grpc packages changed
+            if grep -q '^packages/grpc-' .changed-files; then
+              if [ "$RESTART_PM2" = false ]; then
+                RESTART_PM2=true
+              fi
+            fi
+
+            # Run Docker restart if needed
+            if [ "$RESTART_DOCKER" = true ]; then
+              echo "🔁 Restarting Docker..."
+              docker compose down
+              docker compose up -d --build
+
+              echo "⏳ Waiting for Kafka to be ready..."
+              until docker exec kafka kafka-topics --bootstrap-server localhost:9092 --list > /dev/null 2>&1; do
+                echo "Kafka not ready. Waiting..."
+                sleep 3
+              done
+              echo "✅ Kafka is healthy."
+            fi
+
+            # Restart PM2 services if needed
+            if [ "$RESTART_PM2" = true ]; then
+              echo "♻️ Restarting gRPC services with PM2..."
+              pm2 delete all || true
+
+              cd ~/InsightMesh/packages/grpc-account
+              pm2 start npm --name "grpc-account" -- run start
+
+              cd ~/InsightMesh/packages/grpc-events
+              pm2 start npm --name "grpc-events" -- run start
+            else
+              echo "✅ No PM2 restart needed."
+            fi
+
+            rm -f .changed-files
           EOF
-        
