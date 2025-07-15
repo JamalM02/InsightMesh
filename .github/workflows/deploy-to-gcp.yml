@@ -26,30 +26,27 @@ jobs:
             set -e
             cd ~/InsightMesh
 
-            echo "📥 Pulling latest code..."
+            echo "📥 Fetching and checking for changes..."
             git fetch origin main
             CHANGED=$(git diff --name-only HEAD origin/main)
-            git pull origin main
 
-            echo "$CHANGED" > .changed-files
+            echo "📦 Stashing local changes..."
+            git stash || true
+            git pull origin main
+            git stash pop || true
 
             RESTART_DOCKER=false
             RESTART_PM2=false
 
-            # Restart Docker AND PM2 if docker-compose.yml changed
-            if grep -q '^docker-compose\.yml$' .changed-files; then
+            if echo "$CHANGED" | grep -q '^docker-compose\.yml$'; then
               RESTART_DOCKER=true
               RESTART_PM2=true
             fi
 
-            # Restart ONLY PM2 if grpc packages changed
-            if grep -q '^packages/grpc-' .changed-files; then
-              if [ "$RESTART_PM2" = false ]; then
-                RESTART_PM2=true
-              fi
+            if echo "$CHANGED" | grep -q '^packages/grpc-'; then
+              RESTART_PM2=true
             fi
 
-            # Run Docker restart if needed
             if [ "$RESTART_DOCKER" = true ]; then
               echo "🔁 Restarting Docker..."
               docker compose down
@@ -63,7 +60,6 @@ jobs:
               echo "✅ Kafka is healthy."
             fi
 
-            # Restart PM2 services if needed
             if [ "$RESTART_PM2" = true ]; then
               echo "♻️ Restarting gRPC services with PM2..."
               pm2 delete all || true
@@ -76,6 +72,4 @@ jobs:
             else
               echo "✅ No PM2 restart needed."
             fi
-
-            rm -f .changed-files
           EOF
