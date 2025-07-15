@@ -1,0 +1,24 @@
+# Node
+node_modules/
+package-lock.json
+
+# Build outputs
+dist/
+build/
+.out/
+.next/
+.vercel/
+
+# Logs
+*.log
+
+# IDEs and OS
+.vscode/
+.DS_Store
+
+# PM2 logs
+pids/
+logs/
+*.pid
+*.seed
+*.pid.lock
