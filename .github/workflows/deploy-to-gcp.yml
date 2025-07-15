@@ -29,13 +29,14 @@ jobs:
             docker compose up -d --build
 
             echo "⏳ Waiting for Kafka to pass healthcheck..."
-            until [ "`docker inspect -f '{{.State.Health.Status}}' kafka`" == "healthy" ]; do
+            until docker exec kafka kafka-topics --bootstrap-server localhost:9092 --list > /dev/null 2>&1; do
               echo "Kafka not ready yet. Retrying in 3 seconds..."
               sleep 3
             done
             echo "✅ Kafka is healthy."
 
             # Start gRPC services
+            pm2 delete all || true
             cd InsightMesh/packages/grpc-account
             pm2 start npm --name "grpc-account" -- run start
 

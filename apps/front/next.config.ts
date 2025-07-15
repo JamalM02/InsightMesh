@@ -1,19 +1,14 @@
 import type { NextConfig } from "next";
+import path from "path";
 
-const prodConfig: NextConfig = {
-  basePath: "/app",
-  trailingSlash: true,
-  async redirects() {
-    return [
-      {
-        source: "/app",
-        destination: "/app/",
-        permanent: true,
-      },
-    ];
+const nextConfig: NextConfig = {
+  webpack(config) {
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      "@": path.resolve(__dirname),
+    };
+    return config;
   },
 };
-
-const nextConfig: NextConfig = {};
 
 export default nextConfig;
