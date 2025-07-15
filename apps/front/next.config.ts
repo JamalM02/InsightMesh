@@ -14,7 +14,6 @@ const prodConfig: NextConfig = {
   },
 };
 
-const nextConfig: NextConfig =
-    process.env.NODE_ENV === "production" ? prodConfig : {};
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
