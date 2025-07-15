@@ -37,7 +37,7 @@ jobs:
 
             # Start gRPC services
             pm2 delete all || true
-            cd InsightMesh/packages/grpc-account
+            cd ~/InsightMesh/packages/grpc-account
             pm2 start npm --name "grpc-account" -- run start
 
             cd ~/InsightMesh/packages/grpc-events
