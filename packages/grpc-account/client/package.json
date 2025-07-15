@@ -1,6 +1,6 @@
 {
   "name": "@insightmesh/grpc-account",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "gRPC client for account",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
