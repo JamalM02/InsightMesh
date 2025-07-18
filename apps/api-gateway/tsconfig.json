@@ -22,7 +22,7 @@
       "@controllers/*": ["src/controllers/*"],
       "@middleware": ["src/middleware"],
       "@routes/*": ["src/routes/*"],
-      "@insightmesh/node-common": ["packages/node-common/src"],
+      "@insightmesh/node-common": ["../../packages/node-common/src"],
       "@insightmesh/grpc-account": ["../../packages/grpc-account/client/src"],
       "@insightmesh/grpc-events": ["../../packages/grpc-events/client/src"]
     }
