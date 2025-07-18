@@ -54,7 +54,6 @@ services:
     environment:
       MB_DB_FILE: /metabase-data/metabase.db
       MB_EMBEDDING_APP: "true"
-      MB_SITE_URL: "http://34.57.185.235:3000"
     volumes:
       - metabase_data:/metabase-data
       - ./plugins:/plugins

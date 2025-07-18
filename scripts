@@ -14,6 +14,7 @@ npm config set prefix '~/.npm-global'
 echo 'export PATH=$HOME/.npm-global/bin:$PATH' >> ~/.profile
 source ~/.profile
 
+sudo npm install -g next
 # Check installations
 node -v
 npm -v
@@ -37,6 +38,7 @@ mkdir -p packages/grpc-events/src/grpc
 
 nano packages/grpc-account/.env
 nano packages/grpc-events/.env
+nano apps/front/.env
 
 npm install --workspace=packages/docs --legacy-peer-deps
 npm install --workspace=packages/node-common
@@ -58,7 +60,7 @@ npm run prisma:push --workspace=packages/grpc-account
 npm run build --workspace @insightmesh/node-common
 npm run build --workspace @insightmesh/grpc-account
 npm run build --workspace @insightmesh/grpc-events
-npm run build --workspace @insightmesh/docs
+npm run build --workspace @insightmesh/front
 
 
 
@@ -78,6 +80,8 @@ pm2 start npm --name "grpc-account" -- run start
 cd InsightMesh
 cd packages/grpc-account
 pm2 start npm --name "grpc-events" -- run start
+cd apps/front
+pm2 start "npx next start -p 5000 -H 0.0.0.0" --name front
 
 //log to pm2
 pm2 list
