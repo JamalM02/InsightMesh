@@ -82,6 +82,7 @@ cd packages/grpc-account
 pm2 start npm --name "grpc-events" -- run start
 cd apps/front
 pm2 start "npx next start -p 5000 -H 0.0.0.0" --name front
+pm2 start npm --name "api-gateway" -- run start
 
 //log to pm2
 pm2 list
@@ -116,3 +117,9 @@ run the scripts in clickhouse.sql
 
 
 git clone git@github.com:jamalm02/InsightMesh.git InsightMesh
+
+
+
+sudo nano /etc/nginx/sites-available/insightmesh
+sudo nginx -t
+sudo systemctl reload nginx

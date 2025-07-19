@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sidebar";
 import { OrganizationSwitcher } from "@clerk/nextjs";
 import { memo } from "react";
+import NavDevelopers from "@/components/side-bar/nav-developers";
 
 const SideBar = () => {
   return (
@@ -21,7 +22,7 @@ const SideBar = () => {
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
-          {/* <NavDevelopers /> */} {/* TODO */}
+           <NavDevelopers />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

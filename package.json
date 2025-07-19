@@ -6,6 +6,10 @@
     "apps/*",
     "packages/*"
   ],
+  "scripts": {
+    "build": "npx turbo run build"
+
+  },
   "packageManager": "npm@10.5.0",
   "devDependencies": {
     "chokidar-cli": "^3.0.0",
@@ -15,6 +19,5 @@
   },
   "dependencies": {
     "@insightmesh/grpc-events": "^1.0.0",
-    "mongodb": "^6.17.0"
   }
 }

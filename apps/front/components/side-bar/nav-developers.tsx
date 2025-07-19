@@ -17,12 +17,13 @@ const items: NavItem[] = [
         url: "/developers/keys",
         icon: <Key/>,
     },
+    /*
     {
         title: "Api Reference",
         url: process.env.NEXT_PUBLIC_DOCS_URL!,
         icon: <BookOpen/>,
         target: "_blank",
-    },
+    },*/
 ];
 
 const NavDevelopers = () => {
