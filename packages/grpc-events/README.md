@@ -1,77 +1,119 @@
-# TypeScript gRPC Service with nice-grpc
+# InsightMesh Events Service (`packages/grpc-events`)
 
-A modern TypeScript implementation of a gRPC service using the nice-grpc library.
+This service ingests incoming events via gRPC, validates them, and publishes them to a Kafka stream for further processing and analytics. It plays a central role in real-time event tracking within the InsightMesh system.
 
-## Project Structure
+---
+
+## 🚀 Technologies Used
+
+* **Node.js + TypeScript**
+* **nice-grpc** for gRPC server
+* **KafkaJS** for Kafka producer
+* **Prisma ORM** (for internal logging if needed)
+* **dotenv** for environment variable management
+
+---
+
+## 📦 Features
+
+* Accepts external events from API Gateway via gRPC
+* Publishes events to Kafka topic `events`
+* Validates events using schema logic
+* Designed to support scaling and batching
+
+---
+
+## 📁 Project Structure
 
 ```
-/
-├── service.proto         # gRPC service definition
+packages/grpc-events/
 ├── src/
-│   ├── grpc/            # Generated TypeScript types from protobuf
-│   ├── methods/         # Each RPC method implementation as a separate file
-│   ├── libs/            # Internal logic and utilities
-│   ├── app.ts           # Main server application
-│   └── client.ts        # Example client implementation
+│   ├── grpc/             # gRPC proto-generated types
+│   ├── methods/          # gRPC method handlers
+│   ├── libs/
+│   │   ├── database/     # Prisma DB logic (optional internal logging)
+│   │   ├── env/          # Env config and validation (zod)
+│   │   └── kafka/        # Kafka producer client
+│   ├── app.ts            # gRPC server bootstrap
+│   └── client.ts         # Optional gRPC client
+├── service.proto         # gRPC service definition
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
-## Getting Started
+---
 
-### Prerequisites
+## 📁 Environment Setup
 
-- Node.js (v16 or later)
-- npm or yarn
+Create `.env` in `packages/grpc-events/`:
 
-### Installation
+```env
+HOST="0.0.0.0"
+PORT=50052
+
+# PG
+DATABASE_URL="postgresql://..."
+
+# Kafka
+KAFKA_URL="localhost:9092"
+KAFKA_CLIENT_ID="events-service"
+
+```
+
+---
+
+## 🛠 Development
+
+Install dependencies:
 
 ```bash
-# Install dependencies
-npm install
+npm install --legacy-peer-deps
+```
 
-# Generate TypeScript types from protobuf
+Generate Prisma client (optional):
+
+```bash
+npx prisma generate
+```
+
+Start development server:
+
+```bash
+PORT=50052 npm run dev --workspace=packages/grpc-events
+```
+
+---
+
+## 🛰 gRPC Methods
+
+### `CreateEvent`
+
+Receives a structured event from the API Gateway or external app and publishes it to Kafka.
+
+* **Request**: `CreateEventRequest` (includes `appId`, `type`, and structured `data`)
+* **Response**: `CreateEventResponse` with status confirmation
+
+---
+
+## ✅ Production
+
+Build the service:
+
+```bash
+npm run build
+npm run prisma:generate
 npm run proto:generate
 ```
 
-### Development
+Start server:
 
 ```bash
-# Run the server in development mode
-npm run dev
-
-# Run the client example
-ts-node src/client.ts
+npm start --workspace=packages/grpc-events
 ```
 
-### Building and Running
+---
 
-```bash
-# Build the project
-npm run build
+## 📬 Maintainer
 
-# Run the server
-npm start
-```
-
-## Features
-
-This gRPC service demonstrates all four types of RPC methods:
-
-1. **Unary RPC**: Simple request-response (`SayHello`)
-2. **Server Streaming RPC**: Server sends multiple responses (`SayHelloStream`)
-3. **Client Streaming RPC**: Client sends multiple requests (`SayHellosFromClient`)
-4. **Bidirectional Streaming RPC**: Both client and server stream data (`SayHellosBidirectional`)
-
-## Implementation Details
-
-- Uses `nice-grpc` for a modern, Promise-based API
-- Implements middleware for logging and validation
-- Handles graceful shutdown
-- Demonstrates proper error handling
-- Uses TypeScript for type safety
-
-## License
-
-MIT
+Built and maintained by **Jamal Majadle**.

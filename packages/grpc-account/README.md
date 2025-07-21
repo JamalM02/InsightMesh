@@ -1,77 +1,166 @@
-# TypeScript gRPC Service with nice-grpc
+# InsightMesh Account Service (`packages/grpc-account`)
 
-A modern TypeScript implementation of a gRPC service using the nice-grpc library.
+This service handles user accounts, organization registration, API key management, credit usage tracking, and billing via Stripe. It also acts as a Temporal client for automated billing workflows.
 
-## Project Structure
+---
+
+## 🚀 Technologies Used
+
+* **Node.js + TypeScript**
+* **nice-grpc** for gRPC server/client
+* **Prisma ORM** (PostgreSQL via Neon)
+* **Stripe** for billing and subscriptions
+* **Temporal.io** for workflow orchestration
+* **dotenv** for environment variable management
+
+---
+
+## 📦 Features
+
+* Organization and user registration
+* API key generation, encryption, and validation
+* Usage tracking per organization (linked to events)
+* Billing automation (via Temporal workflows)
+* Integration with Clerk for identity + org sync
+* Integration with Stripe for charging + metering
+
+---
+
+## 📁 Project Structure
 
 ```
-/
-├── service.proto         # gRPC service definition
+packages/grpc-account/
 ├── src/
-│   ├── grpc/            # Generated TypeScript types from protobuf
-│   ├── methods/         # Each RPC method implementation as a separate file
-│   ├── libs/            # Internal logic and utilities
-│   ├── app.ts           # Main server application
-│   └── client.ts        # Example client implementation
+│   ├── grpc/             # gRPC proto-generated types
+│   ├── methods/          # gRPC RPC implementations
+│   ├── libs/             # Prisma, Stripe, encryption, usage logic
+│   ├── workflows/        # Temporal workflow client utils
+│   ├── app.ts            # gRPC server bootstrap
+│   └── client.ts         # Optional gRPC client
+├── service.proto         # gRPC service definition
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
-## Getting Started
+---
 
-### Prerequisites
+## 📁 Environment Setup
 
-- Node.js (v16 or later)
-- npm or yarn
+Create `.env` in `packages/grpc-account/`:
 
-### Installation
+```env
+SERVICE_NAME="account-service"
+HOST="0.0.0.0"
+PORT=50053
+
+# PG
+DATABASE_URL="postgresql://..."
+CLICKHOUSE_URL="http://localhost:8123"
+CLICKHOUSE_USER="default"
+CLICKHOUSE_PASSWORD=""
+
+SECRET_ENCRYPT_KEY="f8bc..."
+
+KAFKA_URL="localhost:29092"
+KAFKA_CLIENT_ID="account-service"
+KAFKA_TOPIC="events"
+KAFKA_GROUP_ID="account-service"
+
+STRIPE_SECRET_KEY="sk_test_..."
+```
+
+---
+
+## 🛠 Development
+
+Install dependencies:
 
 ```bash
-# Install dependencies
-npm install
+npm install --legacy-peer-deps
+```
 
-# Generate TypeScript types from protobuf
+Generate Prisma client:
+
+```bash
+npx prisma generate
+```
+
+Start development server:
+
+```bash
+PORT=50053 npm run dev --workspace=packages/grpc-account
+```
+
+---
+
+## 🛰 gRPC Methods
+
+### `CreateAccount`
+
+Registers a new organization and associates it with a Stripe customer, org ID, secret, and API key.
+
+### `ValidateApiKey`
+
+Validates if the provided API key belongs to a valid organization.
+
+### `RevealApiKey`
+
+Returns a decrypted version of a previously encrypted API key (requires `appId` and `secretId`).
+
+### `MonthlyBilling`
+
+Summarizes the monthly usage of an application and prepares data for Stripe charging.
+
+### `UpdateBillingStatus`
+
+Marks a billing cycle as complete after charging the Stripe customer.
+
+### `GetAccount`
+
+Fetches account and organization metadata using app ID.
+
+### `GetSecret`
+
+## Retrieves encrypted/decrypted secret information used for API key handling.
+
+## 🔐 API Key Management
+
+* Format: `sk_xxxxxxxxxxx`
+* Encrypted using AES and stored in the `Secret` table
+* Decrypted at runtime for comparison
+
+```ts
+const apiKey = decrypt({
+  secretKey: env('SECRET_ENCRYPT_KEY'),
+  iv,
+  ciphertext,
+});
+```
+
+---
+
+---
+
+## ✅ Production
+
+Build the service:
+
+```bash
+npm run build
+npm run prisma:generate
+npm run prisma:push
 npm run proto:generate
 ```
 
-### Development
+Start server:
 
 ```bash
-# Run the server in development mode
-npm run dev
-
-# Run the client example
-ts-node src/client.ts
+npm start --workspace=packages/grpc-account
 ```
 
-### Building and Running
+---
 
-```bash
-# Build the project
-npm run build
+## 📬 Maintainer
 
-# Run the server
-npm start
-```
-
-## Features
-
-This gRPC service demonstrates all four types of RPC methods:
-
-1. **Unary RPC**: Simple request-response (`SayHello`)
-2. **Server Streaming RPC**: Server sends multiple responses (`SayHelloStream`)
-3. **Client Streaming RPC**: Client sends multiple requests (`SayHellosFromClient`)
-4. **Bidirectional Streaming RPC**: Both client and server stream data (`SayHellosBidirectional`)
-
-## Implementation Details
-
-- Uses `nice-grpc` for a modern, Promise-based API
-- Implements middleware for logging and validation
-- Handles graceful shutdown
-- Demonstrates proper error handling
-- Uses TypeScript for type safety
-
-## License
-
-MIT
+Built and maintained by **Jamal Majadle**.

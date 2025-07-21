@@ -1,12 +1,7 @@
-# @syllabus/common
+# 
 
 A common library for Syllabus projects that provides shared utilities, error wrappers, and middleware for nice-grpc.
 
-## Installation
-
-```bash
-npm install @syllabus/common
-```
 
 ## Usage
 
@@ -66,7 +61,3 @@ async function startServer(): Promise<void> {
 - `UnavailableError` - For when a resource is unavailable (Status.UNAVAILABLE)
 - `DeadlineExceededError` - For when a deadline is exceeded (Status.DEADLINE_EXCEEDED)
 - `InternalError` - For internal server errors (Status.INTERNAL)
-
-## License
-
-ISC
