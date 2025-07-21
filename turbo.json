@@ -3,7 +3,12 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "build/**"]
+      "outputs": [
+        "apps/front/.next/**",
+        "apps/api-gateway/dist/**",
+        "packages/grpc-account/dist/**",
+        "packages/grpc-events/dist/**"
+      ]
     },
     "dev": {
       "cache": false
