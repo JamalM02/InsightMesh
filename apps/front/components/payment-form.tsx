@@ -15,7 +15,10 @@ const PaymentForm = () => {
   const elements = useElements();
   const [cardholderName, setCardholderName] = useState("");
   const queryClient = useQueryClient();
-
+  const returnUrl =
+      process.env.NODE_ENV === "production"
+          ? "https://insightmesh.site/payments"
+          : "http://localhost:3000/payments";
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -30,7 +33,7 @@ const PaymentForm = () => {
       const { error } = await stripe.confirmSetup({
         elements,
         confirmParams: {
-          return_url: "/payments",
+          return_url: returnUrl,
           payment_method_data: {
             billing_details: {
               name: cardholderName,
@@ -46,7 +49,7 @@ const PaymentForm = () => {
         queryKey: ["payment-methods"],
       });
     },
-    [stripe, elements, cardholderName, queryClient]
+    [stripe, elements, cardholderName, queryClient ,returnUrl]
   );
 
   return (
