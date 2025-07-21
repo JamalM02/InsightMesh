@@ -7,7 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import {BookOpen, Key} from "lucide-react";
+import {Key} from "lucide-react";
 import Link from "next/link";
 import {memo} from "react";
 
