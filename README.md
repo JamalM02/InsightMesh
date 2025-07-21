@@ -3,7 +3,7 @@
 **InsightMesh** is a real-time event tracking and analytics platform built to demonstrate a full-stack microservices architecture. Designed for developer-facing platforms, it lets users sign up, receive an API key, and track events — which are analyzed and stored in a cloud-native analytics pipeline.
 
 > 🧑‍💻 This is a professional showcase project — not open source — designed to demonstrate proficiency in microservices, gRPC, message queues, cloud deployment, and real-time analytics.
-
+> https://insightmesh.site
 ---
 
 ## 🧱 Architecture Overview
@@ -326,3 +326,6 @@ All without modifying the application logic — just by smartly routing existing
 
 This is a demonstration project by **Jamal Majadle**.
 Reach out for collaboration or opportunities.
+
+## 📄 License
+This project is not open source and is intended for professional showcase purposes only. All rights reserved.
