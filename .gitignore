@@ -3,24 +3,42 @@ node_modules/
 package-lock.json
 
 # Build outputs
-dist/
 build/
-.out/
+dist/
 .next/
+.out/
 .vercel/
 
 # Logs
-*.log
-
-# IDEs and OS
-.vscode/
-.DS_Store
-
-# PM2 logs
-pids/
 logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 *.pid
 *.seed
 *.pid.lock
-/packages/grpc-account/client/
-/packages/grpc-events/client/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# PM2
+pids/
+
+# Editor/IDE configs
+.vscode/
+.idea/
+*.sln
+*.suo
+*.ntvs*
+*.njsproj
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Project-specific (gRPC clients)
+packages/grpc-account/client/
+packages/grpc-events/client/
