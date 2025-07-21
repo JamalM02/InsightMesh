@@ -78,7 +78,7 @@ pm2 start npm --name "grpc-account" --workspace "@insightmesh/grpc-account" -- r
 cd packages/grpc-account
 pm2 start npm --name "grpc-account" -- run start
 cd InsightMesh
-cd packages/grpc-account
+cd packages/grpc-events
 pm2 start npm --name "grpc-events" -- run start
 cd apps/front
 pm2 start "npx next start -p 5000 -H 0.0.0.0" --name front
