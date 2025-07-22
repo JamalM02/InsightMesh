@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspace=@insightmesh/front && npm run build --workspace=@insightmesh/api-gateway && npm run build --workspace=@insightmesh/grpc-account && npm run build --workspace=@insightmesh/grpc-events && npm run build --workspace=@insightmesh/node-common"
+    "build": "npm run build --workspace=@insightmesh/node-common && npm run build --workspace=@insightmesh/grpc-account && npm run build --workspace=@insightmesh/grpc-events && npm run build --workspace=@insightmesh/front && npm run build --workspace=@insightmesh/api-gateway"
   },
   "packageManager": "npm@10.5.0",
   "devDependencies": {
