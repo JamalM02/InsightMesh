@@ -1,5 +1,4 @@
 -- Drop existing tables
-DROP TABLE IF EXISTS kafka_events;
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS kafka_to_events;
 DROP TABLE IF EXISTS applications;

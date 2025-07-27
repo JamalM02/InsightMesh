@@ -13,7 +13,7 @@
     "prisma:push" : "npx prisma db push",
     "prisma:reset": "npx prisma migrate reset",
     "proto:generate": "node ../node-common/scripts/generate-proto.js",
-    "postinstall": "npm run client:generate || echo 'Skipping client generation on Vercel'",
+    "postinstall": "npm run client:generate && npm run prisma:generate",
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "eslint 'src/**/*.ts' --fix",
     "format": "prettier --write 'src/**/*.{ts,js,json}'",
