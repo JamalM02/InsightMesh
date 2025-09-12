@@ -1,20 +1,15 @@
 "use server";
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 
-export const completeOnboarding = async () => {
-  try {
-    const { userId } = await auth();
-    const client = await clerkClient();
-    if (!userId) return redirect("/");
-    await client.users.updateUser(userId, {
-      publicMetadata: {
-        onboardingComplete: true,
-      },
-    });
-  } catch (err) {
-    console.error(err);
-    return redirect("/");
-  }
-};
+export async function completeOnboarding() {
+  const { userId } = await auth();
+  if (!userId) return { ok: false, reason: "NO_USER" };
+
+  const client = await clerkClient();
+  await client.users.updateUserMetadata(userId, {
+    publicMetadata: { onboardingComplete: true },
+  });
+
+  return { ok: true };
+}

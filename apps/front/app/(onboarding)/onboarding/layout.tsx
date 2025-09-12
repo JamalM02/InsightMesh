@@ -6,7 +6,8 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  if ((await auth()).sessionClaims?.metadata.onboardingComplete === true) {
+  const { sessionClaims } = await auth();
+  if (sessionClaims?.onboardingComplete === true) {
     redirect("/dashboard");
   }
   return <>{children}</>;

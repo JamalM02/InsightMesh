@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { useClerk, useOrganizationList } from "@clerk/nextjs";
+import { useOrganizationList, useAuth } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -21,27 +21,33 @@ import { toast } from "sonner";
 
 const OrganizationForm = () => {
   const router = useRouter();
-  const clerk = useClerk();
-  const { createOrganization } = useOrganizationList();
+  const { getToken } = useAuth();
+  const { createOrganization, setActive, isLoaded } = useOrganizationList();
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = useCallback(
     async (values: CreateOrganizationParams) => {
       startTransition(async () => {
         try {
+          if (!isLoaded || !createOrganization || !setActive) {
+            throw new Error("Clerk is not ready yet. Please try again.");
+          }
           const org = await createOrganization?.({
             name: values.name,
             slug: values.slug || undefined,
           });
           if (!org) return;
+          await setActive({ organization: org.id });
           await createAccount({
             id: org.id,
             name: org.name,
             slug: org.slug || undefined,
           });
-          await completeOnboarding();
-          await clerk.session?.touch();
-          router.push("/dashboard");
+          const res = await completeOnboarding();
+          if (res?.ok) {
+            await getToken({ skipCache: true });
+            router.replace("/dashboard");
+          }
         } catch (error) {
           const e = error as { message?: string };
           toast.error(e.message || "Failed to create organization", {
@@ -50,7 +56,7 @@ const OrganizationForm = () => {
         }
       });
     },
-    [createOrganization, router, clerk.session]
+    [createOrganization, setActive, isLoaded, router, getToken]
   );
 
   const form = useForm<CreateOrganizationParams>({
