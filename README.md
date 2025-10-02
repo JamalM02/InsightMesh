@@ -249,6 +249,10 @@ This starts:
 ```bash
 # Update & install system dependencies
 sudo apt update && sudo apt install -y curl docker.io docker-compose
+sudo apt install -y protobuf-compiler
+sudo apt update
+sudo apt install -y nginx
+sudo systemctl enable --now nginx
 
 # Install Node.js 18
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
