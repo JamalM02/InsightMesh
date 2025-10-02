@@ -4,6 +4,7 @@
   "description": "TypeScript gRPC service using nice-grpc",
   "main": "dist/app.js",
   "scripts": {
+    "prebuild": "npm run prisma:generate",
     "build": "tsc && tsc-alias",
     "start": "node dist/app.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node -r tsconfig-paths/register' src/app.ts | pino-pretty",
