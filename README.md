@@ -151,12 +151,36 @@ const apiKey = decrypt({
 
 ## ☁️ Cloud & Docker Setup
 
-### ▶️ Local Setup
+### ▶️ Setup
+
+```bash
+# Update & install system dependencies
+sudo apt update && sudo apt install -y curl docker.io docker-compose
+
+# Install Node.js 18
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Install global npm tools
+sudo npm install -g pm2 dotenv-cli next
+
+# Optional: Fix npm permissions
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+echo 'export PATH=$HOME/.npm-global/bin:$PATH' >> ~/.profile
+source ~/.profile
+
+# Enable Docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+### 🐳 Run Docker Stack
 
 ```bash
 docker-compose up --build
 ```
-
 This starts:
 
 * Kafka + Zookeeper
@@ -190,84 +214,19 @@ SETTINGS
     kafka_handle_error_mode = 'stream';
 ```
 
-Prepare `.env` files for:
+Prepare `.env` files for (.env examples are in each repo readme):
 
 * `packages/grpc-account/.env`
 * `packages/grpc-events/.env`
 * `apps/front/.env`
+* `apps/api-gateway/.env`
 
-Install dependencies:
 
-```bash
-npm install --legacy-peer-deps //it also generate proto automatically
-```
-
-Build all apps:
-
-Also generate Prisma clients and apply schema to Postgres:
-
-```bash
-cd packages/grpc-account
-npm run prisma:generate
-
-cd ../grpc-events
-npm run prisma:generate
-
-npm run prisma:push --workspace=packages/grpc-account
-```
-
-```bash
-npx turbo run build
-```
-
-Start services:
-
-```bash
-# gRPC Account
-PORT=50053 npm run dev --workspace=packages/grpc-account
-
-# gRPC Events
-PORT=50052 npm run dev --workspace=packages/grpc-events
-
-# Frontend
-npm run dev --workspace=apps/front
-```
-
-```bash
-docker-compose up --build
-```
-
-This starts:
-
-* Kafka + Zookeeper
-* ClickHouse + Listener
-* Metabase
-* All microservices
+Install dependencies & generate protos:
 
 ### 📦 Production (VM)
 
 ```bash
-# Update & install system dependencies
-sudo apt update && sudo apt install -y curl docker.io docker-compose
-
-# Install Node.js 18
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt install -y nodejs
-
-# Install global npm tools
-sudo npm install -g pm2 dotenv-cli next
-
-# Optional: Fix npm permissions
-mkdir ~/.npm-global
-npm config set prefix '~/.npm-global'
-echo 'export PATH=$HOME/.npm-global/bin:$PATH' >> ~/.profile
-source ~/.profile
-
-# Enable Docker
-sudo systemctl enable docker
-sudo usermod -aG docker $USER
-newgrp docker
-
 # Create folders for proto files (if needed)
 mkdir -p packages/grpc-account/src/grpc
 mkdir -p packages/grpc-events/src/grpc
@@ -276,12 +235,26 @@ mkdir -p packages/grpc-events/src/grpc
 nano packages/grpc-account/.env
 nano packages/grpc-events/.env
 nano apps/front/.env
+nano apps/api-gateway/.env
 
-# Start Docker stack
-docker-compose up -d
+# Install dependencies in each package
+npm install --legacy-peer-deps
+
+# In the root of the monorepo, run:
+npm run build
+
 
 # Start all apps using PM2
-pm2 start ecosystem.config.js
+pm2 start ecosystem.config.js --env production
+pm2 status
+
+
+# save current process list
+pm2 save
+
+# generate & install the systemd unit for your user
+pm2 startup systemd -u scholarsharenet --hp /home/scholarsharenet
+
 ```
 
 ---

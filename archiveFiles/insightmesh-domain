@@ -1,9 +1,22 @@
 etc/nginx/sites-available/insightmesh
 
-
+# Redirect HTTP to HTTPS
 server {
     listen 80;
     server_name insightmesh.site www.insightmesh.site;
+    return 301 https://$host$request_uri;
+}
+
+# HTTPS Server
+server {
+    listen 443 ssl;
+    server_name insightmesh.site www.insightmesh.site;
+
+    ssl_certificate /etc/ssl/insightmesh/insightmesh.pem;
+    ssl_certificate_key /etc/ssl/insightmesh/insightmesh.key;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
 
     # Web App on Port 5000 (React/Next app or similar)
     location / {
@@ -26,8 +39,6 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
         proxy_redirect off;
-
-        # Avoid broken assets by rewriting base path
         rewrite ^/metabase(/.*)$ $1 break;
     }
 
@@ -38,8 +49,6 @@ server {
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-
-        # Optional: rewrite the base URL if your app expects root
         rewrite ^/api-gateway(/.*)$ $1 break;
     }
 }
