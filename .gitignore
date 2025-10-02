@@ -42,3 +42,5 @@ Thumbs.db
 # Project-specific (gRPC clients)
 packages/grpc-account/client/
 packages/grpc-events/client/
+.DS_Store
+**/.DS_Store
