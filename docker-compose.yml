@@ -25,7 +25,6 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      # external clients use localhost:29092; internal containers use kafka:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     healthcheck:
@@ -38,6 +37,9 @@ services:
   clickhouse:
     image: clickhouse/clickhouse-server:23.3
     container_name: clickhouse
+    environment:
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
     ports:
       - "8123:8123"
       - "9000:9000"
@@ -55,10 +57,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # Use your actual Neon/PG values:
-      MB_DB_CONNECTION_URI: "jdbc:postgresql://<HOST>/<DB>?user=<USER>&password=<PASS>&sslmode=require"
-      MB_PLUGINS_DIR: /plugins
-      MB_EMBEDDING_APP: "true"
+      MB_DB_CONNECTION_URI: ${MB_DB_CONNECTION_URI}
+      MB_PLUGINS_DIR: ${MB_PLUGINS_DIR}
+      MB_EMBEDDING_APP: ${MB_EMBEDDING_APP}
     volumes:
       - metabase_data:/metabase-data
       - ./plugins:/plugins

@@ -223,6 +223,19 @@ Prepare `.env` files for (.env examples are in each repo readme):
 * `apps/front/.env`
 * `apps/api-gateway/.env`
 
+### root/.env
+* ```dotenv
+  # ClickHouse
+    CLICKHOUSE_USER=myuser
+    CLICKHOUSE_PASSWORD=MyStrongPassword!
+
+    # Metabase internal DB (Postgres)
+    MB_DB_CONNECTION_URI=jdbc:postgresql://<HOST>/<DB>?user=<USER>&password=<PASS>&sslmode=require
+
+    # Metabase extra configs
+    MB_PLUGINS_DIR=/plugins
+    MB_EMBEDDING_APP=true``
+
 
 Install dependencies & generate protos:
 
