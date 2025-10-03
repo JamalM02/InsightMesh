@@ -191,6 +191,8 @@ Then, enter the ClickHouse Docker container:
 
 ```bash
 docker exec -it clickhouse clickhouse-client
+sudo systemctl enable docker.service
+sudo systemctl enable containerd.service
 ```
 
 Run the following script inside ClickHouse:
@@ -251,6 +253,7 @@ pm2 status
 
 # save current process list
 pm2 save
+pm2 startup
 
 # generate & install the systemd unit for your user
 pm2 startup systemd -u scholarsharenet --hp /home/scholarsharenet
