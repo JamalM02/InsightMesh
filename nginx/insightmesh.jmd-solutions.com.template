@@ -81,11 +81,8 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # -- Metabase Dashboard (password protected) --
+    # -- Metabase Dashboard (Metabase has its own auth) --
     location /metabase/ {
-        auth_basic "Restricted";
-        auth_basic_user_file /etc/nginx/.htpasswd;
-
         rewrite ^/metabase/(.*) /$1 break;
         proxy_pass http://localhost:${METABASE_PORT};
         proxy_http_version 1.1;
@@ -95,19 +92,6 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
-        proxy_redirect off;
-    }
-
-    # -- Metabase public links (no auth) --
-    location ^~ /metabase/public/ {
-        auth_basic off;
-        rewrite ^/metabase/(.*) /$1 break;
-        proxy_pass http://localhost:${METABASE_PORT};
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
         proxy_redirect off;
     }
 
