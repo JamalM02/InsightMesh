@@ -65,7 +65,7 @@ module.exports = {
         // FRONT (Next.js)
         // =======================
         {
-            name: 'front',
+            name: 'im-front',
             cwd: path.join(ROOT, 'apps/front'),
             script: 'npm',
             args: 'start',
@@ -88,7 +88,7 @@ module.exports = {
         // API GATEWAY
         // =======================
         {
-            name: 'api-gateway',
+            name: 'im-gateway',
             cwd: path.join(ROOT, 'apps/api-gateway'),
             script: 'node',
             args: 'dist/app.js',
@@ -110,7 +110,7 @@ module.exports = {
         // gRPC ACCOUNT
         // =======================
         {
-            name: 'grpc-account',
+            name: 'im-account',
             cwd: path.join(ROOT, 'packages/grpc-account'),
             script: 'node',
             args: 'dist/app.js',
@@ -132,7 +132,7 @@ module.exports = {
         // gRPC EVENTS
         // =======================
         {
-            name: 'grpc-events',
+            name: 'im-events',
             cwd: path.join(ROOT, 'packages/grpc-events'),
             script: 'node',
             args: 'dist/app.js',

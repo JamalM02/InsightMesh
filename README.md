@@ -275,7 +275,7 @@ ORDER BY (appId, slug);
 Verify it works:
 
 ```sql
-SELECT COUNT(*) FROM events;
+docker exec -i insightmesh-clickhouse clickhouse-client -q "SELECT COUNT(*) FROM events"
 ```
 
 Install dependencies & generate protos:
