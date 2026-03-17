@@ -5,32 +5,18 @@
 # Run: bash nginx/setup.sh
 #
 # Ports read from .env files:
-#   ${FRONT_PORT}  ← apps/front/.env          → PORT
-#   ${GATEWAY_PORT}  ← apps/api-gateway/.env    → PORT
-#   ${METABASE_PORT}  ← .env (root)              → METABASE_PORT
-#   ${CLICKHOUSE_PORT}  ← .env (root)              → CLICKHOUSE_PORT
+#   ${FRONT_PORT}  <- apps/front/.env          PORT
+#   ${GATEWAY_PORT}  <- apps/api-gateway/.env    PORT
+#   ${METABASE_PORT}  <- .env (root)              METABASE_PORT
+#   ${CLICKHOUSE_PORT}  <- .env (root)              CLICKHOUSE_PORT
 # =============================================
 
-# Redirect HTTP to HTTPS
+# HTTP Server (Certbot will auto-add HTTPS redirect + SSL block)
 server {
     listen 80;
     server_name insightmesh.jmd-solutions.com;
-    return 301 https://$host$request_uri;
-}
 
-# HTTPS Server
-server {
-    listen 443 ssl;
-    server_name insightmesh.jmd-solutions.com;
-
-    # SSL managed by Certbot (will be auto-added after running certbot)
-    # ssl_certificate /etc/letsencrypt/live/insightmesh.jmd-solutions.com/fullchain.pem;
-    # ssl_certificate_key /etc/letsencrypt/live/insightmesh.jmd-solutions.com/privkey.pem;
-
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-
-    # ── Frontend (Next.js) ──
+    # -- Frontend (Next.js) --
     location / {
         proxy_pass http://localhost:${FRONT_PORT};
         proxy_http_version 1.1;
@@ -43,7 +29,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 
-    # ── API Gateway ──
+    # -- API Gateway --
     location /api-gateway/ {
         proxy_pass http://localhost:${GATEWAY_PORT}/;
         proxy_http_version 1.1;
@@ -54,7 +40,7 @@ server {
         rewrite ^/api-gateway(/.*)$ $1 break;
     }
 
-    # ── Metabase Dashboard (password protected) ──
+    # -- Metabase Dashboard (password protected) --
     location /metabase/ {
         auth_basic "Restricted";
         auth_basic_user_file /etc/nginx/.htpasswd;
@@ -71,7 +57,7 @@ server {
         rewrite ^/metabase(/.*)$ $1 break;
     }
 
-    # ── Metabase public links (no auth) ──
+    # -- Metabase public links (no auth) --
     location ^~ /metabase/public/ {
         auth_basic off;
         proxy_pass http://localhost:${METABASE_PORT}/;
@@ -83,7 +69,7 @@ server {
         proxy_redirect off;
     }
 
-    # ── ClickHouse (password protected) ──
+    # -- ClickHouse (password protected) --
     location /clickhouse/ {
         auth_basic "Restricted";
         auth_basic_user_file /etc/nginx/.htpasswd;
