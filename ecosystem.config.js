@@ -54,10 +54,10 @@ const HOST = '0.0.0.0';
 const GRPC_ACCOUNT_URL = `${HOST}:${ACCOUNT_PORT}`;
 const GRPC_EVENTS_URL = `${HOST}:${EVENTS_PORT}`;
 
-// Auto-construct Docker service URLs
+// Auto-construct Docker service URLs (internal, server-to-server)
 const KAFKA_URL = `localhost:${KAFKA_PORT}`;
 const CLICKHOUSE_URL = `http://localhost:${CLICKHOUSE_PORT}`;
-const NEXT_PUBLIC_METABASE_DASHBOARD_URL = `http://${HOST}:${METABASE_PORT}`;
+// NEXT_PUBLIC_METABASE_DASHBOARD_URL comes from apps/front/.env (Metabase public dashboard link)
 
 module.exports = {
     apps: [
@@ -76,7 +76,7 @@ module.exports = {
                 ...frontEnv,
                 // Override with auto-constructed URLs
                 GRPC_ACCOUNT_URL,
-                NEXT_PUBLIC_METABASE_DASHBOARD_URL,
+                // NEXT_PUBLIC_METABASE_DASHBOARD_URL comes from ...frontEnv above
             },
             max_memory_restart: '512M',
             restart_delay: 2000,
