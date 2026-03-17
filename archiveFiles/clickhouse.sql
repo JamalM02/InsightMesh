@@ -1,9 +1,15 @@
--- Drop existing tables
-DROP TABLE IF EXISTS events;
+-- =============================================
+-- InsightMesh ClickHouse Setup
+-- Run: docker exec -i insightmesh-clickhouse clickhouse-client --multiquery < archiveFiles/clickhouse.sql
+-- =============================================
+
+-- Drop existing tables (safe for fresh setup)
 DROP TABLE IF EXISTS kafka_to_events;
+DROP TABLE IF EXISTS events;
+DROP TABLE IF EXISTS kafka_events;
 DROP TABLE IF EXISTS applications;
 
--- Create the Kafka engine table (source)
+-- 1. Kafka engine table — reads events from Kafka topic
 CREATE TABLE kafka_events
 (
     id    String,
@@ -12,7 +18,7 @@ CREATE TABLE kafka_events
     data  String
 ) ENGINE = Kafka
 SETTINGS
-    kafka_broker_list = 'kafka:9092',  -- Docker Compose service name (internal DNS)
+    kafka_broker_list = 'kafka:9092',
     kafka_topic_list = 'events',
     kafka_group_name = 'clickhouse_events_consumer',
     kafka_format = 'JSONEachRow',
@@ -21,7 +27,7 @@ SETTINGS
     kafka_poll_max_batch_size = 1000,
     kafka_handle_error_mode = 'stream';
 
--- Create the final storage table
+-- 2. Final storage table — permanent event storage
 CREATE TABLE events
 (
     id         String,
@@ -32,19 +38,14 @@ CREATE TABLE events
 ) ENGINE = MergeTree()
 ORDER BY (id, _timestamp);
 
--- Materialized view to pipe Kafka data into events table
+-- 3. Materialized view — auto-pipes Kafka data into events table
 CREATE MATERIALIZED VIEW kafka_to_events
 TO events
 AS
-SELECT
-    id,
-    appId,
-    type,
-    data,
-    now() AS _timestamp
+SELECT id, appId, type, data, now() AS _timestamp
 FROM kafka_events;
 
--- Create applications table for metadata about apps
+-- 4. Applications metadata table — for Metabase dashboard joins
 CREATE TABLE applications
 (
     appId String,
@@ -53,48 +54,3 @@ CREATE TABLE applications
 ) ENGINE = ReplacingMergeTree()
 PRIMARY KEY (appId)
 ORDER BY (appId, slug);
-
--- Insert sample applications
-INSERT INTO applications (appId, name, slug) VALUES
-                                                 ('app1', 'First Application', 'first-app'),
-                                                 ('app2', 'Second Application', 'second-app'),
-                                                 ('app3', 'Third Application', 'third-app');
-
--- Query to verify joins work in Metabase
-SELECT
-    e.id,
-    e.type,
-    e.data,
-    e._timestamp,
-    a.name AS app_name,
-    a.slug AS app_slug
-FROM events e
-         LEFT JOIN applications a ON e.appId = a.appId
-ORDER BY e._timestamp DESC
-    LIMIT 100;
-
--- Count number of events stored
-SELECT COUNT(*) FROM events;
-
--- Show event stats per app
-SELECT
-    a.name AS application_name,
-    a.slug AS application_slug,
-    a.appId,
-    COUNT(e.id) AS event_count
-FROM applications a
-         LEFT JOIN events e ON a.appId = e.appId
-GROUP BY a.appId, a.name, a.slug
-ORDER BY event_count DESC;
-
--- Full app event overview with timestamps
-SELECT
-    e.appId,
-    a.name AS application_name,
-    COUNT(e.id) AS event_count,
-    MIN(e._timestamp) AS first_event,
-    MAX(e._timestamp) AS last_event
-FROM events e
-         LEFT JOIN applications a ON e.appId = a.appId
-GROUP BY e.appId, a.name
-ORDER BY event_count DESC;
