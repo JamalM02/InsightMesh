@@ -14,6 +14,10 @@ ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 # ── Helper: read a value from a .env file ──
 read_env() {
     local file="$1" key="$2" default="$3"
+    if [ ! -f "$file" ]; then
+        echo "$default"
+        return
+    fi
     local value
     value=$(grep -E "^${key}=" "$file" 2>/dev/null | head -1 | cut -d'=' -f2- | tr -d '"' | tr -d "'" | xargs)
     echo "${value:-$default}"
@@ -21,10 +25,10 @@ read_env() {
 
 # ── Read ports from .env files ──
 echo "📖 Reading ports from .env files..."
-export FRONT_PORT=$(read_env "$ROOT_DIR/apps/front/.env" "PORT" "5000")
-export GATEWAY_PORT=$(read_env "$ROOT_DIR/apps/api-gateway/.env" "PORT" "5500")
-export METABASE_PORT=$(read_env "$ROOT_DIR/.env" "METABASE_PORT" "3000")
-export CLICKHOUSE_PORT=$(read_env "$ROOT_DIR/.env" "CLICKHOUSE_PORT" "8123")
+FRONT_PORT=$(read_env "$ROOT_DIR/apps/front/.env" "PORT" "5000")
+GATEWAY_PORT=$(read_env "$ROOT_DIR/apps/api-gateway/.env" "PORT" "5500")
+METABASE_PORT=$(read_env "$ROOT_DIR/.env" "METABASE_PORT" "3000")
+CLICKHOUSE_PORT=$(read_env "$ROOT_DIR/.env" "CLICKHOUSE_PORT" "8123")
 
 echo "   Frontend:    $FRONT_PORT"
 echo "   API Gateway: $GATEWAY_PORT"
@@ -32,14 +36,24 @@ echo "   Metabase:    $METABASE_PORT"
 echo "   ClickHouse:  $CLICKHOUSE_PORT"
 echo ""
 
-# ── Generate nginx config from template ──
+# ── Generate nginx config from template using sed ──
 echo "⚙️  Generating nginx config from template..."
-# Only substitute our 4 variables, leave nginx $vars untouched
-envsubst '${FRONT_PORT} ${GATEWAY_PORT} ${METABASE_PORT} ${CLICKHOUSE_PORT}' \
-    < "$SCRIPT_DIR/$CONF_NAME.template" \
-    > "$SCRIPT_DIR/$CONF_NAME"
+sed \
+    -e "s/\${FRONT_PORT}/$FRONT_PORT/g" \
+    -e "s/\${GATEWAY_PORT}/$GATEWAY_PORT/g" \
+    -e "s/\${METABASE_PORT}/$METABASE_PORT/g" \
+    -e "s/\${CLICKHOUSE_PORT}/$CLICKHOUSE_PORT/g" \
+    "$SCRIPT_DIR/$CONF_NAME.template" > "$SCRIPT_DIR/$CONF_NAME"
+
+# Verify the generated config has no unresolved variables
+if grep -q '\${' "$SCRIPT_DIR/$CONF_NAME"; then
+    echo "❌ ERROR: Generated config still has unresolved variables!"
+    grep '\${' "$SCRIPT_DIR/$CONF_NAME"
+    exit 1
+fi
 
 echo "✅ Generated: nginx/$CONF_NAME"
+echo ""
 
 # ── Install htpasswd tool if not present ──
 if ! command -v htpasswd &>/dev/null; then
