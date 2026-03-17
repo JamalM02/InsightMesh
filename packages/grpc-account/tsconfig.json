@@ -17,8 +17,7 @@
     "paths": {
       "@libs/*": ["src/libs/*"],
       "@grpc/*": ["src/grpc/*"],
-      "@insightmesh/node-common/*": ["../../node-common/src/*"],
-      "@prisma/client": ["generated/prisma"]
+      "@insightmesh/node-common/*": ["../../node-common/src/*"]
     }
   },
   "include": ["src/**/*"],
