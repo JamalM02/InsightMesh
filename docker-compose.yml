@@ -19,7 +19,7 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
-      - "29092:29092"
+      - "${KAFKA_PORT:-29092}:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -41,7 +41,7 @@ services:
       CLICKHOUSE_USER: ${CLICKHOUSE_USER}
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
     ports:
-      - "8123:8123"
+      - "${CLICKHOUSE_PORT:-8123}:8123"
       - "9000:9000"
     volumes:
       - clickhouse_data:/var/lib/clickhouse
@@ -55,7 +55,7 @@ services:
     depends_on:
       - clickhouse
     ports:
-      - "3000:3000"
+      - "${METABASE_PORT:-3000}:3000"
     environment:
       MB_DB_CONNECTION_URI: ${MB_DB_CONNECTION_URI}
       MB_PLUGINS_DIR: ${MB_PLUGINS_DIR}

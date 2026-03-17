@@ -31,22 +31,33 @@ function parseEnvFile(envPath) {
 // Base directory (where this file lives = project root)
 const ROOT = __dirname;
 
-// Load each service's .env
+// Load root .env (Docker service ports) and each service's .env
+const rootEnv = parseEnvFile(path.join(ROOT, '.env'));
 const frontEnv = parseEnvFile(path.join(ROOT, 'apps/front/.env'));
 const gatewayEnv = parseEnvFile(path.join(ROOT, 'apps/api-gateway/.env'));
 const accountEnv = parseEnvFile(path.join(ROOT, 'packages/grpc-account/.env'));
 const eventsEnv = parseEnvFile(path.join(ROOT, 'packages/grpc-events/.env'));
 
-// Read ports from .env (with fallback defaults)
+// Read Node.js service ports from .env (with fallback defaults)
 const FRONT_PORT = frontEnv.PORT || '5000';
 const GATEWAY_PORT = gatewayEnv.PORT || '5500';
 const ACCOUNT_PORT = accountEnv.PORT || '50053';
 const EVENTS_PORT = eventsEnv.PORT || '50052';
 
+// Read Docker service ports from root .env (with fallback defaults)
+const KAFKA_PORT = rootEnv.KAFKA_PORT || '29092';
+const CLICKHOUSE_PORT = rootEnv.CLICKHOUSE_PORT || '8123';
+const METABASE_PORT = rootEnv.METABASE_PORT || '3000';
+
 // Auto-construct inter-service URLs from the ports above
 const HOST = '0.0.0.0';
 const GRPC_ACCOUNT_URL = `${HOST}:${ACCOUNT_PORT}`;
 const GRPC_EVENTS_URL = `${HOST}:${EVENTS_PORT}`;
+
+// Auto-construct Docker service URLs
+const KAFKA_URL = `localhost:${KAFKA_PORT}`;
+const CLICKHOUSE_URL = `http://localhost:${CLICKHOUSE_PORT}`;
+const NEXT_PUBLIC_METABASE_DASHBOARD_URL = `http://${HOST}:${METABASE_PORT}`;
 
 module.exports = {
     apps: [
@@ -63,8 +74,9 @@ module.exports = {
                 NODE_ENV: 'production',
                 PORT: FRONT_PORT,
                 ...frontEnv,
-                // Override with auto-constructed URL from grpc-account's PORT
+                // Override with auto-constructed URLs
                 GRPC_ACCOUNT_URL,
+                NEXT_PUBLIC_METABASE_DASHBOARD_URL,
             },
             max_memory_restart: '512M',
             restart_delay: 2000,
@@ -106,6 +118,9 @@ module.exports = {
                 NODE_ENV: 'production',
                 PORT: ACCOUNT_PORT,
                 ...accountEnv,
+                // Override with auto-constructed Docker service URLs
+                KAFKA_URL,
+                CLICKHOUSE_URL,
             },
             max_memory_restart: '512M',
             restart_delay: 2000,
@@ -125,6 +140,8 @@ module.exports = {
                 NODE_ENV: 'production',
                 PORT: EVENTS_PORT,
                 ...eventsEnv,
+                // Override with auto-constructed Docker service URL
+                KAFKA_URL,
             },
             max_memory_restart: '512M',
             restart_delay: 2000,
