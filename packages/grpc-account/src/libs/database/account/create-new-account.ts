@@ -2,7 +2,7 @@ import { db } from '@libs/database/db';
 import { env } from '@libs/env';
 import { generateTypeId, InternalError, logger } from '@insightmesh/node-common';
 import { encrypt, hash, id } from 'encrypt-tools';
-import { Account } from '@prisma/client';
+import { Account } from '@libs/prisma-client';
 import { clickhouse } from '@libs/clickhouse';
 import { stripe } from '@libs/stripe';
 

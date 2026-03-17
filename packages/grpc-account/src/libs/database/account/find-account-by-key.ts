@@ -1,6 +1,6 @@
 import { InternalError, logger } from '@insightmesh/node-common';
 import { db } from '@libs/database/db';
-import { Account } from '@prisma/client';
+import { Account } from '@libs/prisma-client';
 import { hash } from 'encrypt-tools';
 
 export const findAccountByKey = async (key: string): Promise<Account | null> => {

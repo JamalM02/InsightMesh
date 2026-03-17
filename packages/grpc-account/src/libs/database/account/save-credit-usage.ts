@@ -1,6 +1,6 @@
 import { logger, InternalError } from '@insightmesh/node-common';
 import { db } from '@libs/database/db';
-import { CreditUsage, UsageType } from '@prisma/client';
+import { CreditUsage, UsageType } from '@libs/prisma-client';
 
 export const saveCreditUsage = async ({
   id,

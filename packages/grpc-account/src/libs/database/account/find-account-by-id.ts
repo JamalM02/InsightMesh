@@ -1,6 +1,6 @@
 import { db } from '@libs/database/db';
 import { InternalError, logger } from '@insightmesh/node-common';
-import { Account } from '@prisma/client';
+import { Account } from '@libs/prisma-client';
 
 export const findAccountById = async (params: { id: string }): Promise<Account> => {
   try {

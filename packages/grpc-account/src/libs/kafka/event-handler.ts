@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { saveCreditUsage } from '@libs/database/account/save-credit-usage';
-import { UsageType } from '@prisma/client';
+import { UsageType } from '@libs/prisma-client';
 
 const EventSchema = z.object({
   id: z.string().min(1),

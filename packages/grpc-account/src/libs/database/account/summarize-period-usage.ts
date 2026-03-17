@@ -1,7 +1,7 @@
 import { InternalError, logger, NotFoundError } from '@insightmesh/node-common';
 import { db } from '@libs/database/db';
 import { PeriodBillingParams } from '@libs/schemas';
-import { PeriodCreditUsage } from '@prisma/client';
+import { PeriodCreditUsage } from '@libs/prisma-client';
 
 const getLastPaidDate = async (appId: string): Promise<Date> => {
   try {
