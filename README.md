@@ -289,10 +289,9 @@ mkdir -p packages/grpc-events/src/grpc
 
 # Setup environment variables as explained in previous step
 
-# Install dependencies in each package
-npm install --legacy-peer-deps
 
-# In the root of the monorepo, run:
+# In the ROOT of the monorepo, run:
+npm install --legacy-peer-deps
 npm run build
 
 
