@@ -299,6 +299,15 @@ npm run build
 pm2 start ecosystem.config.js --env production
 pm2 status
 
+# If you update a .env file later, a plain `pm2 restart` won't pick up the changes.
+# You must use --update-env to re-read ecosystem.config.js (which parses .env files):
+pm2 restart ecosystem.config.js --update-env           # all services
+pm2 restart ecosystem.config.js --only im-front --update-env  # single service
+
+# ⚠️  NEXT_PUBLIC_* variables (e.g. NEXT_PUBLIC_METABASE_DASHBOARD_URL) are baked
+#     into the Next.js bundle at BUILD time. Changing them requires a rebuild:
+cd apps/front && npm run build && cd ../..
+pm2 restart ecosystem.config.js --only im-front --update-env
 
 # save current process list so PM2 restores them after reboot
 pm2 save
