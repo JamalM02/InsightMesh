@@ -1,17 +1,22 @@
 #!/bin/bash
 # =============================================
-# InsightMesh Nginx Setup
-# Reads ports from .env files, generates nginx config, installs SSL
+# InsightMesh Nginx + SSL Setup
+# Reads ports from .env, generates nginx config, gets SSL cert
 # Run: bash nginx/setup.sh
 # =============================================
 set -e
 
 DOMAIN="insightmesh.jmd-solutions.com"
+EMAIL="insightmesh@jmd-solutions.com"
 CONF_NAME="insightmesh.jmd-solutions.com"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 
-# ── Helper: read a value from a .env file ──
+echo "=========================================="
+echo "  InsightMesh Nginx Setup"
+echo "=========================================="
+
+# -- Helper: read a value from a .env file --
 read_env() {
     local file="$1" key="$2" default="$3"
     if [ ! -f "$file" ]; then
@@ -23,8 +28,9 @@ read_env() {
     echo "${value:-$default}"
 }
 
-# ── Read ports from .env files ──
-echo "📖 Reading ports from .env files..."
+# [1/6] Read ports from .env files
+echo ""
+echo "[1/6] Reading ports from .env files..."
 FRONT_PORT=$(read_env "$ROOT_DIR/apps/front/.env" "PORT" "5000")
 GATEWAY_PORT=$(read_env "$ROOT_DIR/apps/api-gateway/.env" "PORT" "5500")
 METABASE_PORT=$(read_env "$ROOT_DIR/.env" "METABASE_PORT" "3000")
@@ -34,10 +40,10 @@ echo "   Frontend:    $FRONT_PORT"
 echo "   API Gateway: $GATEWAY_PORT"
 echo "   Metabase:    $METABASE_PORT"
 echo "   ClickHouse:  $CLICKHOUSE_PORT"
-echo ""
 
-# ── Generate nginx config from template using sed ──
-echo "⚙️  Generating nginx config from template..."
+# [2/6] Generate nginx config from template
+echo ""
+echo "[2/6] Generating nginx config from template..."
 sed \
     -e "s/\r$//" \
     -e "s/\${FRONT_PORT}/$FRONT_PORT/g" \
@@ -46,58 +52,68 @@ sed \
     -e "s/\${CLICKHOUSE_PORT}/$CLICKHOUSE_PORT/g" \
     "$SCRIPT_DIR/$CONF_NAME.template" > "$SCRIPT_DIR/$CONF_NAME"
 
-# Verify the generated config has no unresolved variables
 if grep -q '\${' "$SCRIPT_DIR/$CONF_NAME"; then
-    echo "❌ ERROR: Generated config still has unresolved variables!"
+    echo "  ERROR: Generated config has unresolved variables!"
     grep '\${' "$SCRIPT_DIR/$CONF_NAME"
     exit 1
 fi
+echo "  Generated: nginx/$CONF_NAME"
 
-echo "✅ Generated: nginx/$CONF_NAME"
+# [3/6] Install nginx config
 echo ""
+echo "[3/6] Installing Nginx configuration..."
+sudo mkdir -p /var/www/certbot
 
-# ── Install htpasswd tool if not present ──
+# Install htpasswd if needed
 if ! command -v htpasswd &>/dev/null; then
-    echo "📦 Installing apache2-utils for htpasswd..."
-    sudo apt-get update && sudo apt-get install -y apache2-utils
+    sudo apt-get update -qq && sudo apt-get install -y -qq apache2-utils
 fi
 
-# ── Create htpasswd file if it doesn't exist ──
+# Create htpasswd if not exists
 if [ ! -f /etc/nginx/.htpasswd ]; then
-    echo "🔐 Creating htpasswd file (for Metabase & ClickHouse access)..."
+    echo "  Creating htpasswd file (for Metabase & ClickHouse)..."
     sudo htpasswd -c /etc/nginx/.htpasswd admin
 else
-    echo "✅ /etc/nginx/.htpasswd already exists"
+    echo "  /etc/nginx/.htpasswd already exists"
 fi
 
-# ── Copy nginx config ──
-echo "📋 Installing nginx config..."
-sudo cp "$SCRIPT_DIR/$CONF_NAME" /etc/nginx/sites-available/
+sudo cp "$SCRIPT_DIR/$CONF_NAME" /etc/nginx/sites-available/$CONF_NAME
 sudo ln -sf /etc/nginx/sites-available/$CONF_NAME /etc/nginx/sites-enabled/
 
-# ── Test & reload nginx ──
-echo "🧪 Testing nginx config..."
-sudo nginx -t
-
-echo "🔄 Reloading nginx..."
-sudo systemctl reload nginx
-
-# ── SSL with Certbot ──
+# [4/6] SSL Certificate
 echo ""
-echo "🔒 Setting up SSL with Certbot..."
-if ! command -v certbot &>/dev/null; then
-    echo "📦 Installing certbot..."
-    sudo apt update
-    sudo apt install -y certbot python3-certbot-nginx
+if [ ! -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then
+    echo "[4/6] No SSL cert found -- generating with certbot..."
+    sudo systemctl stop nginx || true
+    sudo certbot certonly --standalone \
+        --non-interactive \
+        --agree-tos \
+        --email $EMAIL \
+        -d $DOMAIN
+else
+    echo "[4/6] SSL cert already exists -- skipping certbot"
 fi
 
-sudo certbot --nginx -d $DOMAIN
+# [5/6] Test and start nginx
+echo ""
+echo "[5/6] Testing Nginx configuration..."
+sudo nginx -t
 
 echo ""
-echo "✅ Done! $DOMAIN is now live with HTTPS"
+echo "[6/6] Starting Nginx..."
+sudo systemctl start nginx || sudo systemctl reload nginx
+sudo systemctl enable nginx
+
+# Setup SSL auto-renewal
+(crontab -l 2>/dev/null | grep -v certbot; echo "0 3 * * * certbot renew --quiet --post-hook 'systemctl reload nginx'") | crontab -
+
 echo ""
-echo "Services accessible at:"
-echo "  🌐 Frontend:     https://$DOMAIN/              (port $FRONT_PORT)"
-echo "  🔌 API Gateway:  https://$DOMAIN/api-gateway/  (port $GATEWAY_PORT)"
-echo "  📊 Metabase:     https://$DOMAIN/metabase/     (port $METABASE_PORT, password protected)"
-echo "  🗄️  ClickHouse:  https://$DOMAIN/clickhouse/   (port $CLICKHOUSE_PORT, password protected)"
+echo "=========================================="
+echo "  Done! $DOMAIN is live"
+echo "=========================================="
+echo ""
+echo "  Frontend:     https://$DOMAIN/              (port $FRONT_PORT)"
+echo "  API Gateway:  https://$DOMAIN/api-gateway/  (port $GATEWAY_PORT)"
+echo "  Metabase:     https://$DOMAIN/metabase/     (port $METABASE_PORT, password protected)"
+echo "  ClickHouse:   https://$DOMAIN/clickhouse/   (port $CLICKHOUSE_PORT, password protected)"
+echo ""

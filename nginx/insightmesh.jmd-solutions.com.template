@@ -1,9 +1,7 @@
 # =============================================
-# InsightMesh — insightmesh.jmd-solutions.com
+# InsightMesh -- insightmesh.jmd-solutions.com
 # =============================================
-# AUTO-GENERATED from .template — do not edit directly!
-# Run: bash nginx/setup.sh
-#
+# AUTO-GENERATED from .template by setup.sh
 # Ports read from .env files:
 #   ${FRONT_PORT}  <- apps/front/.env          PORT
 #   ${GATEWAY_PORT}  <- apps/api-gateway/.env    PORT
@@ -11,10 +9,53 @@
 #   ${CLICKHOUSE_PORT}  <- .env (root)              CLICKHOUSE_PORT
 # =============================================
 
-# HTTP Server (Certbot will auto-add HTTPS redirect + SSL block)
+# HTTP -> HTTPS redirect
 server {
     listen 80;
+    listen [::]:80;
     server_name insightmesh.jmd-solutions.com;
+
+    # Let's Encrypt challenge location
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+# HTTPS server
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name insightmesh.jmd-solutions.com;
+
+    # SSL certificates (managed by certbot)
+    ssl_certificate /etc/letsencrypt/live/insightmesh.jmd-solutions.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/insightmesh.jmd-solutions.com/privkey.pem;
+
+    # SSL configuration (modern settings)
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # HSTS
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # Logging
+    access_log /var/log/nginx/insightmesh.access.log;
+    error_log /var/log/nginx/insightmesh.error.log;
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_types text/plain text/css text/xml text/javascript application/javascript application/x-javascript application/xml application/json;
 
     # -- Frontend (Next.js) --
     location / {
@@ -31,13 +72,13 @@ server {
 
     # -- API Gateway --
     location /api-gateway/ {
-        proxy_pass http://localhost:${GATEWAY_PORT}/;
+        rewrite ^/api-gateway/(.*) /$1 break;
+        proxy_pass http://localhost:${GATEWAY_PORT};
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        rewrite ^/api-gateway(/.*)$ $1 break;
     }
 
     # -- Metabase Dashboard (password protected) --
@@ -45,7 +86,8 @@ server {
         auth_basic "Restricted";
         auth_basic_user_file /etc/nginx/.htpasswd;
 
-        proxy_pass http://localhost:${METABASE_PORT}/;
+        rewrite ^/metabase/(.*) /$1 break;
+        proxy_pass http://localhost:${METABASE_PORT};
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -54,13 +96,13 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
         proxy_redirect off;
-        rewrite ^/metabase(/.*)$ $1 break;
     }
 
     # -- Metabase public links (no auth) --
     location ^~ /metabase/public/ {
         auth_basic off;
-        proxy_pass http://localhost:${METABASE_PORT}/;
+        rewrite ^/metabase/(.*) /$1 break;
+        proxy_pass http://localhost:${METABASE_PORT};
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -75,7 +117,8 @@ server {
         auth_basic_user_file /etc/nginx/.htpasswd;
 
         proxy_set_header Authorization $http_authorization;
-        proxy_pass http://localhost:${CLICKHOUSE_PORT}/;
+        rewrite ^/clickhouse/(.*) /$1 break;
+        proxy_pass http://localhost:${CLICKHOUSE_PORT};
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
