@@ -1,0 +1,5 @@
+# Force LF line endings for files that run on Linux
+*.sh text eol=lf
+*.template text eol=lf
+nginx/* text eol=lf
+scripts/* text eol=lf

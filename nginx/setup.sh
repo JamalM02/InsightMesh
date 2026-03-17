@@ -39,6 +39,7 @@ echo ""
 # ── Generate nginx config from template using sed ──
 echo "⚙️  Generating nginx config from template..."
 sed \
+    -e "s/\r$//" \
     -e "s/\${FRONT_PORT}/$FRONT_PORT/g" \
     -e "s/\${GATEWAY_PORT}/$GATEWAY_PORT/g" \
     -e "s/\${METABASE_PORT}/$METABASE_PORT/g" \
