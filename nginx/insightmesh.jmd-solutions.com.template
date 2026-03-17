@@ -82,8 +82,9 @@ server {
     }
 
     # -- Metabase Dashboard (Metabase has its own auth) --
-    # proxy_hide_header removes Metabase's default X-Frame-Options: DENY
-    # so the frontend (same domain) can embed public dashboards in an iframe
+    # Metabase sets X-Frame-Options: DENY by default, which blocks iframe embedding.
+    # We strip it and replace with Content-Security-Policy frame-ancestors, which
+    # allows ONLY our own domain to embed Metabase in an iframe (not any external site).
     location /metabase/ {
         rewrite ^/metabase/(.*) /$1 break;
         proxy_pass http://localhost:${METABASE_PORT};
@@ -97,6 +98,7 @@ server {
         proxy_redirect off;
         proxy_hide_header X-Frame-Options;
         proxy_hide_header Content-Security-Policy;
+        add_header Content-Security-Policy "frame-ancestors 'self' https://insightmesh.jmd-solutions.com" always;
     }
 
     # -- ClickHouse (password protected) --

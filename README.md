@@ -3,7 +3,7 @@
 **InsightMesh** is a real-time event tracking and analytics platform built to demonstrate a full-stack microservices architecture. Designed for developer-facing platforms, it lets users sign up, receive an API key, and track events — which are analyzed and stored in a cloud-native analytics pipeline.
 
 > 🧑‍💻 This is a professional showcase project — not open source — designed to demonstrate proficiency in microservices, gRPC, message queues, cloud deployment, and real-time analytics.
-> https://insightmesh.site
+> https://insightmesh.jmd-solutions.com
 ---
 
 ## 🧱 Architecture Overview
@@ -21,7 +21,7 @@ Here’s how InsightMesh processes data across distributed services:
 
 ---
 
-1. **User signs up** on [`https://insightmesh.site`](https://insightmesh.site) using **Clerk**.
+1. **User signs up** on [`https://insightmesh.jmd-solutions.com`](https://insightmesh.jmd-solutions.com) using **Clerk**.
 
 2. Clerk manages user auth and **organization creation**, which is synced with `grpc-account`.
 
@@ -30,7 +30,7 @@ Here’s how InsightMesh processes data across distributed services:
 4. They send an event to:
 
    ```
-   POST https://insightmesh.site/api-gateway/api/events
+   POST https://insightmesh.jmd-solutions.com/api-gateway/api/events
    ```
 
    ```json

@@ -15,10 +15,7 @@ const PaymentForm = () => {
   const elements = useElements();
   const [cardholderName, setCardholderName] = useState("");
   const queryClient = useQueryClient();
-  const returnUrl =
-      process.env.NODE_ENV === "production"
-          ? "https://insightmesh.site/payments"
-          : "http://localhost:3000/payments";
+  const returnUrl = `${window.location.origin}/payments`;
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
