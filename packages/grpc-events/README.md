@@ -46,20 +46,19 @@ packages/grpc-events/
 
 ## 📁 Environment Setup
 
-Create `.env` in `packages/grpc-events/`:
+Copy the example and fill in your values:
 
-```env
-HOST="0.0.0.0"
-PORT=50052
-
-# PG
-DATABASE_URL="postgresql://..."
-
-# Kafka
-KAFKA_URL="localhost:9092"
-KAFKA_CLIENT_ID="events-service"
-
+```bash
+cp .env.example .env
 ```
+
+| Variable | Description |
+|---|---|
+| `HOST` | Bind address (default: `0.0.0.0`) |
+| `PORT` | gRPC server port (default: `50052`) |
+| `DATABASE_URL` | PostgreSQL connection string (Neon) |
+| `KAFKA_URL` | Kafka broker URL |
+| `KAFKA_CLIENT_ID` | Kafka client ID (default: `events-service`) |
 
 ---
 

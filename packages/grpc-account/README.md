@@ -47,28 +47,27 @@ packages/grpc-account/
 
 ## 📁 Environment Setup
 
-Create `.env` in `packages/grpc-account/`:
+Copy the example and fill in your values:
 
-```env
-SERVICE_NAME="account-service"
-HOST="0.0.0.0"
-PORT=50053
-
-# PG
-DATABASE_URL="postgresql://..."
-CLICKHOUSE_URL="http://localhost:8123"
-CLICKHOUSE_USER="default"
-CLICKHOUSE_PASSWORD=""
-
-SECRET_ENCRYPT_KEY="f8bc..."
-
-KAFKA_URL="localhost:29092"
-KAFKA_CLIENT_ID="account-service"
-KAFKA_TOPIC="events"
-KAFKA_GROUP_ID="account-service"
-
-STRIPE_SECRET_KEY="sk_test_..."
+```bash
+cp .env.example .env
 ```
+
+| Variable | Description |
+|---|---|
+| `SERVICE_NAME` | Service identifier (default: `account-service`) |
+| `HOST` | Bind address (default: `0.0.0.0`) |
+| `PORT` | gRPC server port (default: `50053`) |
+| `DATABASE_URL` | PostgreSQL connection string (Neon) |
+| `CLICKHOUSE_URL` | ClickHouse HTTP endpoint |
+| `CLICKHOUSE_USERNAME` | ClickHouse username |
+| `CLICKHOUSE_PASSWORD` | ClickHouse password |
+| `SECRET_ENCRYPT_KEY` | 64-char hex key for API key encryption |
+| `KAFKA_URL` | Kafka broker URL |
+| `KAFKA_CLIENT_ID` | Kafka client ID |
+| `KAFKA_TOPIC` | Kafka topic for events |
+| `KAFKA_GROUP_ID` | Kafka consumer group ID |
+| `STRIPE_SECRET_KEY` | Stripe secret key for billing |
 
 ---
 

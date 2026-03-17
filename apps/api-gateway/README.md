@@ -68,12 +68,18 @@ apps/api-gateway/
 
 ## 📁 Environment Setup
 
-```env
-PORT=5500
+Copy the example and fill in your values:
 
-GRPC_EVENTS_URL=0.0.0.0:50052
-GRPC_ACCOUNT_URL=0.0.0.0:50053
+```bash
+cp .env.example .env
 ```
+
+| Variable | Description |
+|---|---|
+| `PORT` | Port for the Express server (default: `5500`) |
+| `GRPC_ACCOUNT_URL` | gRPC Account service URL (auto-injected by `ecosystem.config.js` in production) |
+
+> **Note:** `GRPC_ACCOUNT_URL` is automatically injected by PM2 in production based on the `PORT` value in `packages/grpc-account/.env`. The `.env` value is only used for local development.
 
 ---
 

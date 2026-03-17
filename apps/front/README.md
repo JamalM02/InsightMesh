@@ -31,19 +31,21 @@ It allows users to:
 
 ## 📁 Environment Setup
 
-Create `.env` file in `apps/front/`:
+Copy the example and fill in your values:
 
-```env
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
-CLERK_SECRET_KEY=sk_test_...
-
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_SECRET_KEY=sk_test_...
-GRPC_ACCOUNT_URL=0.0.0.0:50053
-
-NEXT_PUBLIC_METABASE_DASHBOARD_URL=http://0.0.0.0:3000
-
+```bash
+cp .env.example .env
 ```
+
+| Variable | Description |
+|---|---|
+| `PORT` | Port for the Next.js server (default: `5000`) |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key |
+| `CLERK_SECRET_KEY` | Clerk secret key |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key |
+| `STRIPE_SECRET_KEY` | Stripe secret key |
+| `GRPC_ACCOUNT_URL` | gRPC Account service URL (auto-injected by `ecosystem.config.js` in production) |
+| `NEXT_PUBLIC_METABASE_DASHBOARD_URL` | Metabase dashboard URL |
 
 ---
 
@@ -75,8 +77,10 @@ npm run start --workspace=apps/front
 `start` is configured as:
 
 ```json
-"start": "next start -p 5000 -H 0.0.0.0"
+"start": "next start -p ${PORT:-5000} -H 0.0.0.0"
 ```
+
+> The port is read from the `PORT` environment variable (defaults to 5000).
 
 ---
 

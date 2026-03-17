@@ -170,6 +170,8 @@ npm config set prefix '~/.npm-global'
 echo 'export PATH=$HOME/.npm-global/bin:$PATH' >> ~/.profile
 source ~/.profile
 
+sudo apt install -y protobuf-compiler
+
 # Enable Docker
 sudo systemctl enable docker
 sudo usermod -aG docker $USER
@@ -216,25 +218,19 @@ SETTINGS
     kafka_handle_error_mode = 'stream';
 ```
 
-Prepare `.env` files for (.env examples are in each repo readme):
+Prepare `.env` files from the provided examples:
 
-* `packages/grpc-account/.env`
-* `packages/grpc-events/.env`
-* `apps/front/.env`
-* `apps/api-gateway/.env`
+```bash
+cp .env.example .env
+cp apps/front/.env.example apps/front/.env
+cp apps/api-gateway/.env.example apps/api-gateway/.env
+cp packages/grpc-account/.env.example packages/grpc-account/.env
+cp packages/grpc-events/.env.example packages/grpc-events/.env
+```
 
-### root/.env
-* ```dotenv
-  # ClickHouse
-    CLICKHOUSE_USER=myuser
-    CLICKHOUSE_PASSWORD=MyStrongPassword!
+Then fill in your actual values in each `.env` file. See each service's README for variable descriptions.
 
-    # Metabase internal DB (Postgres)
-    MB_DB_CONNECTION_URI=jdbc:postgresql://<HOST>/<DB>?user=<USER>&password=<PASS>&sslmode=require
-
-    # Metabase extra configs
-    MB_PLUGINS_DIR=/plugins
-    MB_EMBEDDING_APP=true``
+> **Port management:** In production, `ecosystem.config.js` reads each service's `PORT` from its `.env` and auto-injects inter-service URLs (`GRPC_ACCOUNT_URL`, `GRPC_EVENTS_URL`) into dependent services. Change a port in one place → all services update automatically on `pm2 restart`.
 
 
 Install dependencies & generate protos:
@@ -246,11 +242,7 @@ Install dependencies & generate protos:
 mkdir -p packages/grpc-account/src/grpc
 mkdir -p packages/grpc-events/src/grpc
 
-# Setup environment variables
-nano packages/grpc-account/.env
-nano packages/grpc-events/.env
-nano apps/front/.env
-nano apps/api-gateway/.env
+# Setup environment variables as explained in previous step
 
 # Install dependencies in each package
 npm install --legacy-peer-deps
