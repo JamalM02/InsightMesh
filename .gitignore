@@ -45,5 +45,9 @@ nginx/insightmesh.jmd-solutions.com
 # Project-specific (gRPC clients)
 packages/grpc-account/client/
 packages/grpc-events/client/
+
+# Prisma generated clients
+packages/grpc-account/generated/
+packages/grpc-events/generated/
 .DS_Store
 **/.DS_Store

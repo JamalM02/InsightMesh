@@ -5,6 +5,7 @@ dotenv.config();
 const envSchema = z.object({
   PORT: z.coerce.number(),
   GRPC_ACCOUNT_URL: z.string(),
+  GRPC_EVENTS_URL: z.string(),
 });
 type Env = z.infer<typeof envSchema>;
 const envValues = envSchema.parse(process.env);

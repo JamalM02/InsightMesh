@@ -90,8 +90,9 @@ module.exports = {
         {
             name: 'im-gateway',
             cwd: path.join(ROOT, 'apps/api-gateway'),
-            script: 'node',
-            args: 'dist/app.js',
+            script: 'npm',
+            args: 'start',
+            interpreter: 'none',
             env: {
                 NODE_ENV: 'production',
                 PORT: GATEWAY_PORT,
