@@ -39,6 +39,9 @@ pids/
 .DS_Store
 Thumbs.db
 
+# Nginx (auto-generated from .template by setup.sh)
+nginx/insightmesh.jmd-solutions.com
+
 # Project-specific (gRPC clients)
 packages/grpc-account/client/
 packages/grpc-events/client/
