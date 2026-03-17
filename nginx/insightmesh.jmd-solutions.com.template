@@ -82,6 +82,8 @@ server {
     }
 
     # -- Metabase Dashboard (Metabase has its own auth) --
+    # proxy_hide_header removes Metabase's default X-Frame-Options: DENY
+    # so the frontend (same domain) can embed public dashboards in an iframe
     location /metabase/ {
         rewrite ^/metabase/(.*) /$1 break;
         proxy_pass http://localhost:${METABASE_PORT};
@@ -93,6 +95,8 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
         proxy_redirect off;
+        proxy_hide_header X-Frame-Options;
+        proxy_hide_header Content-Security-Policy;
     }
 
     # -- ClickHouse (password protected) --
