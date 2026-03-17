@@ -19,7 +19,7 @@ read_env() {
         return
     fi
     local value
-    value=$(grep -E "^${key}=" "$file" 2>/dev/null | head -1 | cut -d'=' -f2- | tr -d '"' | tr -d "'" | xargs)
+    value=$(grep -E "^${key}=" "$file" 2>/dev/null | head -1 | cut -d'=' -f2- | tr -d '"' | tr -d "'" | tr -d '\r' | xargs)
     echo "${value:-$default}"
 }
 
