@@ -300,14 +300,82 @@ pm2 start ecosystem.config.js --env production
 pm2 status
 
 
-# save current process list
+# save current process list so PM2 restores them after reboot
 pm2 save
-pm2 startup
 
-# generate & install the systemd unit for your user
-pm2 startup systemd -u scholarsharenet --hp /home/scholarsharenet
+# enable PM2 to auto-start on system boot
+# (run `pm2 startup` first — it prints a command you need to copy & run with sudo)
+pm2 startup
+# then copy-paste the output command, e.g.:
+# sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u <your-username> --hp /home/<your-username>
 
 ```
+
+### 🌐 Nginx Reverse Proxy & SSL
+
+All services are exposed through a single domain via **Nginx** as a reverse proxy, with automatic **Let's Encrypt SSL** certificates.
+
+#### How it works
+
+The setup script (`nginx/setup.sh`) reads ports from each service's `.env` file and generates an Nginx config from a template (`nginx/insightmesh.jmd-solutions.com.template`). This means if you change a port in any `.env`, just re-run the setup script — no manual Nginx editing needed.
+
+#### Routes
+
+| Path | Service | Port Source |
+|---|---|---|
+| `/` | Frontend (Next.js) | `apps/front/.env` → `PORT` |
+| `/api-gateway/*` | API Gateway | `apps/api-gateway/.env` → `PORT` |
+| `/metabase/*` | Metabase Dashboard | `.env` (root) → `METABASE_PORT` |
+| `/clickhouse/*` | ClickHouse HTTP | `.env` (root) → `CLICKHOUSE_PORT` |
+
+> **Security:** ClickHouse is behind HTTP Basic Auth (`/etc/nginx/.htpasswd`). Metabase uses its own built-in authentication.
+
+#### Run the setup
+
+```bash
+# From the project root
+bash nginx/setup.sh
+```
+
+The script will:
+
+1. **Read ports** from `.env` files (`apps/front/.env`, `apps/api-gateway/.env`, root `.env`)
+2. **Generate** the Nginx config by substituting ports into the template
+3. **Install** the config to `/etc/nginx/sites-available/` and symlink to `sites-enabled/`
+4. **Create htpasswd** file for ClickHouse basic auth (prompts for password on first run)
+5. **Obtain SSL certificate** via Certbot (standalone mode, auto-skips if cert already exists)
+6. **Test & restart** Nginx
+7. **Set up auto-renewal** cron job for SSL certificates (`certbot renew` daily at 3 AM)
+
+#### After setup, your services are live at:
+
+```
+https://insightmesh.jmd-solutions.com/              → Frontend
+https://insightmesh.jmd-solutions.com/api-gateway/  → API Gateway
+https://insightmesh.jmd-solutions.com/metabase/      → Metabase
+https://insightmesh.jmd-solutions.com/clickhouse/    → ClickHouse (password protected)
+```
+
+#### Re-running after port changes
+
+If you update a port in any `.env` file, just re-run:
+
+```bash
+bash nginx/setup.sh
+```
+
+It will regenerate the config with the new ports and reload Nginx. Existing SSL certs are preserved.
+
+#### Template file
+
+The Nginx config template lives at `nginx/insightmesh.jmd-solutions.com.template`. It includes:
+
+- HTTP → HTTPS redirect
+- TLS 1.2/1.3 with modern cipher suite
+- HSTS header
+- Gzip compression
+- WebSocket support (for Next.js HMR and Metabase)
+- Proper `X-Forwarded-*` headers for all proxied services
 
 ---
 
