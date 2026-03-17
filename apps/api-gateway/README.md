@@ -53,16 +53,162 @@ apps/api-gateway/
 
 ### `POST /api/events`
 
+Track any event from your platform. All events flow through Kafka into ClickHouse for real-time analytics.
+
+#### Headers
+
+| Header | Required | Description |
+|---|---|---|
+| `Content-Type` | Yes | `application/json` |
+| `x-api-key` | Yes | Your secret API key (starts with `sk_`) |
+
+#### Request Body
+
 ```json
 {
-  "type": "string",
-  "data": { ... },
-  "x-api-Key": "sk_abc123"
+  "type": "string (required) — event category name",
+  "data": { "...any key-value pairs (required) — event payload" }
 }
 ```
 
-* **Validates** `apiKey` via `grpc-account`
-* If valid, calls `grpc-events.CreateEvent`
+#### Response (201 Created)
+
+```json
+{
+  "id": "evt_2abc3def4ghi5jkl",
+  "appId": "org_abc123",
+  "type": "page.view",
+  "data": { "page": "/pricing", "referrer": "google.com" }
+}
+```
+
+---
+
+### 📋 Examples
+
+#### 1. Basic event — cURL
+
+```bash
+curl -X POST https://insightmesh.jmd-solutions.com/api-gateway/api/events \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: sk_YOUR_API_KEY_HERE" \
+  -d '{
+    "type": "page.view",
+    "data": {
+      "page": "/pricing",
+      "referrer": "google.com",
+      "userAgent": "Mozilla/5.0"
+    }
+  }'
+```
+
+#### 2. User action tracking
+
+```bash
+curl -X POST https://insightmesh.jmd-solutions.com/api-gateway/api/events \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: sk_YOUR_API_KEY_HERE" \
+  -d '{
+    "type": "button.click",
+    "data": {
+      "buttonId": "signup-cta",
+      "page": "/landing",
+      "userId": "user_12345"
+    }
+  }'
+```
+
+#### 3. Purchase event
+
+```bash
+curl -X POST https://insightmesh.jmd-solutions.com/api-gateway/api/events \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: sk_YOUR_API_KEY_HERE" \
+  -d '{
+    "type": "purchase.completed",
+    "data": {
+      "orderId": "ORD-98765",
+      "amount": 49.99,
+      "currency": "USD",
+      "items": 3
+    }
+  }'
+```
+
+#### 4. External feed (e.g., Reddit RSS via Make.com/n8n)
+
+```bash
+curl -X POST https://insightmesh.jmd-solutions.com/api-gateway/api/events \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: sk_YOUR_API_KEY_HERE" \
+  -d '{
+    "type": "reddit.post",
+    "data": {
+      "id": "1k2abc",
+      "author": "u/satoshi",
+      "title": "Bitcoin hits new all-time high",
+      "link": "https://reddit.com/r/CryptoCurrency/comments/1k2abc",
+      "timestamp": "2026-03-17T19:00:00Z"
+    }
+  }'
+```
+
+#### 5. JavaScript / Node.js
+
+```javascript
+const response = await fetch('https://insightmesh.jmd-solutions.com/api-gateway/api/events', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'x-api-key': 'sk_YOUR_API_KEY_HERE',
+  },
+  body: JSON.stringify({
+    type: 'page.view',
+    data: {
+      page: '/dashboard',
+      userId: 'user_42',
+      sessionId: 'sess_abc123',
+    },
+  }),
+});
+
+const result = await response.json();
+console.log(result);
+// { id: "evt_...", appId: "org_...", type: "page.view", data: { ... } }
+```
+
+#### 6. Python
+
+```python
+import requests
+
+response = requests.post(
+    "https://insightmesh.jmd-solutions.com/api-gateway/api/events",
+    headers={
+        "Content-Type": "application/json",
+        "x-api-key": "sk_YOUR_API_KEY_HERE",
+    },
+    json={
+        "type": "api.call",
+        "data": {
+            "endpoint": "/users",
+            "method": "GET",
+            "status": 200,
+            "duration_ms": 45,
+        },
+    },
+)
+
+print(response.json())
+```
+
+#### Error Responses
+
+| Status | Meaning | Example |
+|---|---|---|
+| `400` | Invalid JSON body | `{"message": "Expected ',' or '}' ..."}` |
+| `401` | Missing or invalid API key | `{"message": "Unauthorized"}` |
+| `500` | Internal server error | `{"message": "Internal Server Error"}` |
 
 ---
 
