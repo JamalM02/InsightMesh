@@ -12,7 +12,7 @@ CREATE TABLE kafka_events
     data  String
 ) ENGINE = Kafka
 SETTINGS
-    kafka_broker_list = 'kafka:9092',  -- Internal Docker hostname
+    kafka_broker_list = 'kafka:9092',  -- Docker Compose service name (internal DNS)
     kafka_topic_list = 'events',
     kafka_group_name = 'clickhouse_events_consumer',
     kafka_format = 'JSONEachRow',

@@ -1,7 +1,7 @@
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
-    container_name: zookeeper
+    container_name: insightmesh-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -14,7 +14,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
-    container_name: kafka
+    container_name: insightmesh-kafka
     depends_on:
       - zookeeper
     ports:
@@ -36,7 +36,7 @@ services:
 
   clickhouse:
     image: clickhouse/clickhouse-server:23.3
-    container_name: clickhouse
+    container_name: insightmesh-clickhouse
     environment:
       CLICKHOUSE_USER: ${CLICKHOUSE_USER}
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
@@ -51,7 +51,7 @@ services:
 
   metabase:
     image: metabase/metabase
-    container_name: metabase
+    container_name: insightmesh-metabase
     depends_on:
       - clickhouse
     ports:

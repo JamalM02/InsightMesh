@@ -77,9 +77,10 @@ cp .env.example .env
 | Variable | Description |
 |---|---|
 | `PORT` | Port for the Express server (default: `5500`) |
+| `GRPC_EVENTS_URL` | gRPC Events service URL (auto-injected by `ecosystem.config.js` in production) |
 | `GRPC_ACCOUNT_URL` | gRPC Account service URL (auto-injected by `ecosystem.config.js` in production) |
 
-> **Note:** `GRPC_ACCOUNT_URL` is automatically injected by PM2 in production based on the `PORT` value in `packages/grpc-account/.env`. The `.env` value is only used for local development.
+> **Note:** `GRPC_EVENTS_URL` and `GRPC_ACCOUNT_URL` are automatically injected by PM2 in production based on the `PORT` values in each gRPC service's `.env`. The `.env` values here are only used for local development.
 
 ---
 

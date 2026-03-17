@@ -178,10 +178,26 @@ sudo usermod -aG docker $USER
 newgrp docker
 ```
 
+### 📋 Prepare Environment Variables
+
+Copy the example `.env` files and fill in your actual values:
+
+```bash
+cp .env.example .env
+cp apps/front/.env.example apps/front/.env
+cp apps/api-gateway/.env.example apps/api-gateway/.env
+cp packages/grpc-account/.env.example packages/grpc-account/.env
+cp packages/grpc-events/.env.example packages/grpc-events/.env
+```
+
+Then fill in your actual values in each `.env` file. See each service's README for variable descriptions.
+
+> **Port management:** In production, `ecosystem.config.js` reads each service's `PORT` from its `.env` and auto-injects inter-service URLs (`GRPC_ACCOUNT_URL`, `GRPC_EVENTS_URL`) and Docker service URLs (`KAFKA_URL`, `CLICKHOUSE_URL`, `NEXT_PUBLIC_METABASE_DASHBOARD_URL`) into dependent services. Change a port in one place → all services update automatically on `pm2 restart`.
+
 ### 🐳 Run Docker Stack
 
 ```bash
-docker-compose up --build
+docker-compose up --build -d
 ```
 This starts:
 
@@ -189,17 +205,27 @@ This starts:
 * ClickHouse + Listener
 * Metabase
 
-Then, enter the ClickHouse Docker container:
+Then set up the ClickHouse analytics pipeline. This creates the Kafka → ClickHouse data flow:
 
 ```bash
-docker exec -it clickhouse clickhouse-client
+# Enable Docker services on boot
 sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
+
+# Run the ClickHouse setup script
+docker exec -i insightmesh-clickhouse clickhouse-client --multiquery < archiveFiles/clickhouse.sql
 ```
 
-Run the following script inside ClickHouse:
+Or manually enter the ClickHouse client and run the SQL:
+
+```bash
+docker exec -it insightmesh-clickhouse clickhouse-client
+```
+
+Then paste the following (also found in `archiveFiles/clickhouse.sql`):
 
 ```sql
+-- 1. Kafka engine table — reads events from Kafka topic
 CREATE TABLE kafka_events
 (
     id    String,
@@ -216,22 +242,41 @@ SETTINGS
     kafka_max_block_size = 1048576,
     kafka_poll_max_batch_size = 1000,
     kafka_handle_error_mode = 'stream';
+
+-- 2. Final storage table — permanent event storage
+CREATE TABLE events
+(
+    id         String,
+    appId      String,
+    type       String,
+    data       String,
+    _timestamp DateTime DEFAULT now()
+) ENGINE = MergeTree()
+ORDER BY (id, _timestamp);
+
+-- 3. Materialized view — auto-pipes Kafka data into events table
+CREATE MATERIALIZED VIEW kafka_to_events
+TO events
+AS
+SELECT id, appId, type, data, now() AS _timestamp
+FROM kafka_events;
+
+-- 4. Applications metadata table — for Metabase dashboard joins
+CREATE TABLE applications
+(
+    appId String,
+    name  String,
+    slug  String
+) ENGINE = ReplacingMergeTree()
+PRIMARY KEY (appId)
+ORDER BY (appId, slug);
 ```
 
-Prepare `.env` files from the provided examples:
+Verify it works:
 
-```bash
-cp .env.example .env
-cp apps/front/.env.example apps/front/.env
-cp apps/api-gateway/.env.example apps/api-gateway/.env
-cp packages/grpc-account/.env.example packages/grpc-account/.env
-cp packages/grpc-events/.env.example packages/grpc-events/.env
+```sql
+SELECT COUNT(*) FROM events;
 ```
-
-Then fill in your actual values in each `.env` file. See each service's README for variable descriptions.
-
-> **Port management:** In production, `ecosystem.config.js` reads each service's `PORT` from its `.env` and auto-injects inter-service URLs (`GRPC_ACCOUNT_URL`, `GRPC_EVENTS_URL`) into dependent services. Change a port in one place → all services update automatically on `pm2 restart`.
-
 
 Install dependencies & generate protos:
 
