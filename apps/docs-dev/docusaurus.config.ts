@@ -6,6 +6,7 @@ import type * as OpenApiPlugin from "docusaurus-plugin-openapi-docs";
 const config: Config = {
   future: {
     experimental_faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
+    v4: true,
   },
   title: "InsightMesh Developer Hub",
   tagline:
@@ -13,7 +14,6 @@ const config: Config = {
   url: "https://insightmesh.jmd-solutions.com",
   baseUrl: "/docs/",
   onBrokenLinks: "warn",
-  onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
   organizationName: "InsightMesh",
   projectName: "InsightMesh",
