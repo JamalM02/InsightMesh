@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  title: InsightMesh Events API
+  description: "API for creating and managing events in InsightMesh"
+  version: "1.0"
+  contact:
+    name: InsightMesh Support
+tags:
+  - name: Events
+    description: Event tracking endpoints
+servers:
+  - url: https://insightmesh.jmd-solutions.com/api-gateway
+    description: Production
+  - url: http://localhost:5500
+    description: Local development
+paths:
+  /api/events:
+    post:
+      operationId: Create_Event_v1
+      summary: Create a new event
+      description: Creates a new event with the specified type and data
+      tags:
+        - Events
+      security:
+        - x-api-key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEventRequest"
+      responses:
+        "201":
+          description: Event created successfully
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized - Invalid API key
+        "500":
+          description: Internal server error
+components:
+  securitySchemes:
+    x-api-key:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key for authentication. Get yours from the InsightMesh dashboard under Developers > API Keys.
+  schemas:
+    CreateEventRequest:
+      type: object
+      required:
+        - type
+        - data
+      properties:
+        type:
+          type: string
+          description: The type of event being created
+          example: "user.created"
+        data:
+          type: object
+          description: Additional data associated with the event
+          example:
+            userId: "user-789"
+            email: "user@example.com"
+            registeredAt: "2025-04-20T12:30:45Z"

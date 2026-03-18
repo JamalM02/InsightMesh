@@ -33,11 +33,13 @@ echo ""
 echo "[1/6] Reading ports from .env files..."
 FRONT_PORT=$(read_env "$ROOT_DIR/apps/front/.env" "PORT" "5000")
 GATEWAY_PORT=$(read_env "$ROOT_DIR/apps/api-gateway/.env" "PORT" "5500")
+DOCS_PORT=$(read_env "$ROOT_DIR/apps/docs-dev/.env" "PORT" "6000")
 METABASE_PORT=$(read_env "$ROOT_DIR/.env" "METABASE_PORT" "3000")
 CLICKHOUSE_PORT=$(read_env "$ROOT_DIR/.env" "CLICKHOUSE_PORT" "8123")
 
 echo "   Frontend:    $FRONT_PORT"
 echo "   API Gateway: $GATEWAY_PORT"
+echo "   Dev Docs:    $DOCS_PORT"
 echo "   Metabase:    $METABASE_PORT"
 echo "   ClickHouse:  $CLICKHOUSE_PORT"
 
@@ -48,6 +50,7 @@ sed \
     -e "s/\r$//" \
     -e "s/\${FRONT_PORT}/$FRONT_PORT/g" \
     -e "s/\${GATEWAY_PORT}/$GATEWAY_PORT/g" \
+    -e "s/\${DOCS_PORT}/$DOCS_PORT/g" \
     -e "s/\${METABASE_PORT}/$METABASE_PORT/g" \
     -e "s/\${CLICKHOUSE_PORT}/$CLICKHOUSE_PORT/g" \
     "$SCRIPT_DIR/$CONF_NAME.template" > "$SCRIPT_DIR/$CONF_NAME"
@@ -114,6 +117,7 @@ echo "=========================================="
 echo ""
 echo "  Frontend:     https://$DOMAIN/              (port $FRONT_PORT)"
 echo "  API Gateway:  https://$DOMAIN/api-gateway/  (port $GATEWAY_PORT)"
+echo "  Dev Docs:     https://$DOMAIN/docs/         (port $DOCS_PORT)"
 echo "  Metabase:     https://$DOMAIN/metabase/     (port $METABASE_PORT, password protected)"
 echo "  ClickHouse:   https://$DOMAIN/clickhouse/   (port $CLICKHOUSE_PORT, password protected)"
 echo ""

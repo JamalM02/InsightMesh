@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Key } from "lucide-react";
+import { BookOpen, Key } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { memo } from "react";
@@ -19,6 +19,12 @@ const items: NavItem[] = [
     title: "API Keys",
     url: "/developers/keys",
     icon: <Key />,
+  },
+  {
+    title: "API Docs",
+    url: "/docs",
+    icon: <BookOpen />,
+    target: "_blank",
   },
 ];
 

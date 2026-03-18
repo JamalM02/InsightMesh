@@ -35,12 +35,14 @@ const ROOT = __dirname;
 const rootEnv = parseEnvFile(path.join(ROOT, '.env'));
 const frontEnv = parseEnvFile(path.join(ROOT, 'apps/front/.env'));
 const gatewayEnv = parseEnvFile(path.join(ROOT, 'apps/api-gateway/.env'));
+const docsEnv = parseEnvFile(path.join(ROOT, 'apps/docs-dev/.env'));
 const accountEnv = parseEnvFile(path.join(ROOT, 'packages/grpc-account/.env'));
 const eventsEnv = parseEnvFile(path.join(ROOT, 'packages/grpc-events/.env'));
 
 // Read Node.js service ports from .env (with fallback defaults)
 const FRONT_PORT = frontEnv.PORT || '5000';
 const GATEWAY_PORT = gatewayEnv.PORT || '5500';
+const DOCS_PORT = docsEnv.PORT || '6000';
 const ACCOUNT_PORT = accountEnv.PORT || '50053';
 const EVENTS_PORT = eventsEnv.PORT || '50052';
 
@@ -102,6 +104,26 @@ module.exports = {
                 GRPC_EVENTS_URL,
             },
             max_memory_restart: '512M',
+            restart_delay: 2000,
+            exp_backoff_restart_delay: 200,
+            autorestart: true,
+        },
+
+        // =======================
+        // DEVELOPER DOCS (Docusaurus)
+        // =======================
+        {
+            name: 'im-docs',
+            cwd: path.join(ROOT, 'apps/docs-dev'),
+            script: 'npm',
+            args: 'run start:server',
+            interpreter: 'none',
+            env: {
+                NODE_ENV: 'production',
+                PORT: DOCS_PORT,
+                ...docsEnv,
+            },
+            max_memory_restart: '256M',
             restart_delay: 2000,
             exp_backoff_restart_delay: 200,
             autorestart: true,
