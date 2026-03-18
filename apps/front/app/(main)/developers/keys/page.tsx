@@ -1,6 +1,11 @@
 import Breadcrumbs from "@/components/breadcrumbs";
+import PageContainer from "@/components/page-container";
 import RevealKeyPanel from "@/components/reveal-key";
-import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "API Keys",
+};
 
 export default async function Page() {
   return (
@@ -11,10 +16,12 @@ export default async function Page() {
           { title: "Keys", url: "/developers/keys" },
         ]}
       />
-      <div className={cn("flex flex-col gap-4", "p-5", "w-full")}>
-        <h1 className={cn("text-3xl font-bold text-white")}>Developers Keys</h1>
+      <PageContainer
+        title="API Keys"
+        description="Manage your API keys for authenticating with the InsightMesh platform"
+      >
         <RevealKeyPanel />
-      </div>
+      </PageContainer>
     </>
   );
 }

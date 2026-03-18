@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Plus } from "lucide-react";
 import { memo, useState } from "react";
 
 type Props = {
@@ -55,7 +55,8 @@ const AddPaymentMethod = ({ className }: Props) => {
                 className="cursor-pointer"
                 onClick={() => setShowForm(true)}
               >
-                + Add Payment Method
+                <Plus className="w-4 h-4" />
+                Add Payment Method
               </Button>
             </motion.div>
           )}

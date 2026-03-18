@@ -15,7 +15,7 @@ const FormLayout = ({ children }: Props) => {
       transition={{ duration: 0.5 }}
       className="w-full max-w-md h-min"
     >
-      <Card className="bg-white/80 dark:bg-gray-900/80 border-0">
+      <Card className="bg-card/80 backdrop-blur-sm border-border">
         <CardContent className="p-6">{children}</CardContent>
       </Card>
     </motion.div>

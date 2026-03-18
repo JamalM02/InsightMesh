@@ -17,6 +17,7 @@
     "typescript": "^5.4.0"
   },
   "dependencies": {
-    "@insightmesh/grpc-events": "^1.0.0"
+    "@insightmesh/grpc-events": "^1.0.0",
+    "@radix-ui/react-alert-dialog": "^1.1.15"
   }
 }

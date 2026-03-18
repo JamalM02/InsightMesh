@@ -1,25 +1,33 @@
-'use client';
+"use client";
 
 import Breadcrumbs from "@/components/breadcrumbs";
-import { cn } from "@/lib/utils";
+import PageContainer from "@/components/page-container";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function Page() {
-    return (
-        <>
-            <Breadcrumbs
-                items={[
-                    { title: "Main", url: "" },
-                    { title: "Home", url: "/dashboard" },
-                ]}
-            />
-            <h1 className={cn("text-white")}>Dashboard Page</h1>
+  return (
+    <>
+      <Breadcrumbs
+        items={[
+          { title: "Main", url: "" },
+          { title: "Home", url: "/dashboard" },
+        ]}
+      />
+      <PageContainer
+        title="Dashboard"
+        description="Monitor your analytics and event data in real-time"
+      >
+        <Card className="flex-1 overflow-hidden">
+          <CardContent className="p-0 h-full">
             <iframe
-                className="px-5 py-10 h-full"
-                src={process.env.NEXT_PUBLIC_METABASE_DASHBOARD_URL}
-                frameBorder="0"
-                allowFullScreen
-                loading="lazy"
+              className="w-full h-full min-h-[70vh] border-0 rounded-lg"
+              src={process.env.NEXT_PUBLIC_METABASE_DASHBOARD_URL}
+              allowFullScreen
+              loading="lazy"
             />
-        </>
-    );
+          </CardContent>
+        </Card>
+      </PageContainer>
+    </>
+  );
 }

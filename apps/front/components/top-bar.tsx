@@ -5,31 +5,38 @@ import {
   BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbSeparator,
+  BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useBreadcumb } from "@/hooks/use-breadcumb";
-import { cn } from "@/lib/utils";
-import { Separator } from "@radix-ui/react-separator";
+import { Separator } from "@/components/ui/separator";
+import { useBreadcrumb } from "@/hooks/use-breadcrumb";
 import Link from "next/link";
 import { Fragment, memo } from "react";
 
 const BreadcrumbNav = () => {
-  const { items } = useBreadcumb();
+  const { items } = useBreadcrumb();
 
   return (
-    <header
-      className={cn("h-[4rem]", "items-center", "flex", "w-full", "gap-2")}
-    >
+    <header className="h-16 flex items-center w-full gap-3 px-4 border-b border-border/40">
       <SidebarTrigger className="cursor-pointer" />
-      <Separator orientation="vertical" className="mr-2 max-h-8" />
+      <Separator orientation="vertical" className="h-6" />
       <Breadcrumb>
         <BreadcrumbList>
           {items.map((item, index) => (
             <Fragment key={item.title}>
               <BreadcrumbItem>
-                {/* <BreadcrumbLink> */}
-                <Link href={item.url}>{item.title}</Link>
-                {/* </BreadcrumbLink> */}
+                {index === items.length - 1 ? (
+                  <BreadcrumbPage className="font-medium">
+                    {item.title}
+                  </BreadcrumbPage>
+                ) : (
+                  <Link
+                    href={item.url}
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {item.title}
+                  </Link>
+                )}
               </BreadcrumbItem>
               {index !== items.length - 1 && (
                 <BreadcrumbSeparator key={`separator-${item.title}`} />
