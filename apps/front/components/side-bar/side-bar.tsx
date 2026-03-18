@@ -15,7 +15,7 @@ const SideBar = () => {
   return (
     <Sidebar>
       <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
             IM
           </div>
@@ -23,13 +23,15 @@ const SideBar = () => {
             InsightMesh
           </span>
         </div>
-        <OrganizationSwitcher
-          createOrganizationUrl="/org/create"
-          hidePersonal
-        />
       </SidebarHeader>
       <SidebarSeparator />
       <SidebarContent>
+        <div className="px-3 pt-3">
+          <OrganizationSwitcher
+            createOrganizationUrl="/org/create"
+            hidePersonal
+          />
+        </div>
         <NavMain />
         <NavDevelopers />
       </SidebarContent>
