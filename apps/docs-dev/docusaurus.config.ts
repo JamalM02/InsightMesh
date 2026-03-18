@@ -5,7 +5,6 @@ import type * as OpenApiPlugin from "docusaurus-plugin-openapi-docs";
 
 const config: Config = {
   future: {
-    experimental_faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
     v4: true,
   },
   title: "InsightMesh Developer Hub",
