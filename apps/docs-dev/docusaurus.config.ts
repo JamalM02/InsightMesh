@@ -108,6 +108,20 @@ const config: Config = {
   } satisfies Preset.ThemeConfig,
 
   plugins: [
+    function polyfillPathPlugin() {
+      return {
+        name: "polyfill-path",
+        configureWebpack() {
+          return {
+            resolve: {
+              fallback: {
+                path: require.resolve("path-browserify"),
+              },
+            },
+          };
+        },
+      };
+    },
     [
       "docusaurus-plugin-openapi-docs",
       {
