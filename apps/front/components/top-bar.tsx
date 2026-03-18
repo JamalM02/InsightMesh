@@ -10,6 +10,7 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { useBreadcrumb } from "@/hooks/use-breadcrumb";
+import ThemeToggle from "@/components/theme-toggle";
 import Link from "next/link";
 import { Fragment, memo } from "react";
 
@@ -45,6 +46,9 @@ const BreadcrumbNav = () => {
           ))}
         </BreadcrumbList>
       </Breadcrumb>
+      <div className="ml-auto">
+        <ThemeToggle />
+      </div>
     </header>
   );
 };

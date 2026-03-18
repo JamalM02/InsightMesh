@@ -5,6 +5,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { dark } from "@clerk/themes";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,11 +24,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider appearance={{ baseTheme: [dark] }}>
+    <ClerkProvider
+      appearance={{
+        baseTheme: [dark],
+        variables: { colorPrimary: "#6366f1" },
+      }}
+    >
       <html lang="en" suppressHydrationWarning>
-        <body className={cn(inter.className, "dark antialiased")}>
-          {children}
-          <Toaster richColors />
+        <body className={cn(inter.className, "antialiased")}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster richColors />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
