@@ -1,9 +1,13 @@
-import { InternalError } from '@insightmesh/node-common';
+import { InternalError, InvalidArgumentError } from '@insightmesh/node-common';
 import { CreateEventRequest } from '@grpc/service';
 import { kafkaProducer } from './kafka';
 import { typeid } from 'typeid-js';
 
 export const sendKafkaEvent = async (payload: CreateEventRequest) => {
+  if (!payload.appId || !payload.type || !payload.data) {
+    throw new InvalidArgumentError('appId, type, and data are required');
+  }
+
   try {
     const message = {
       id: typeid('evt').toString(),
