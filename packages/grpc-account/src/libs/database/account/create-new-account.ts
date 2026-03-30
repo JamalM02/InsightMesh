@@ -11,6 +11,9 @@ export const createNewAccount = async (params: {
   name: string;
   slug?: string;
 }): Promise<Account> => {
+  // Track stripeCustomerId outside the DB transaction so we can clean it up on failure
+  let stripeCustomerId: string | undefined;
+
   try {
     const apiKey = id('sk', 42);
     const { iv, ciphertext } = encrypt({
@@ -18,19 +21,22 @@ export const createNewAccount = async (params: {
       secretKey: env('SECRET_ENCRYPT_KEY'),
     });
 
-    const result = await db.$transaction(async (tx) => {
-      const stripeResult = await stripe.customers.create({
-        name: params.id,
-        description: `Customer for ${params.id}`,
-        metadata: {
-          appId: params.id,
-        },
-      });
+    // Create the Stripe customer BEFORE the DB transaction so its ID is
+    // available for proper cleanup if anything goes wrong afterwards.
+    const stripeResult = await stripe.customers.create({
+      name: params.id,
+      description: `Customer for ${params.id}`,
+      metadata: {
+        appId: params.id,
+      },
+    });
+    stripeCustomerId = stripeResult.id;
 
+    const result = await db.$transaction(async (tx) => {
       const account = await tx.account.create({
         data: {
           id: params.id,
-          stripeId: stripeResult.id,
+          stripeId: stripeCustomerId!,
           secret: {
             create: [
               {
@@ -50,12 +56,19 @@ export const createNewAccount = async (params: {
         name: params.name,
         slug: params.slug,
       });
+
       return account;
     });
 
     return result;
   } catch (error) {
-    await stripe.customers.del(params.id);
+    // If the Stripe customer was created but the DB transaction failed,
+    // clean it up using the correct Stripe customer ID (not params.id).
+    if (stripeCustomerId) {
+      await stripe.customers.del(stripeCustomerId).catch((cleanupErr) => {
+        logger.error('Failed to clean up Stripe customer after account creation error:', cleanupErr);
+      });
+    }
     logger.error('Failed to create new account:', error);
     throw new InternalError('CREATE_ACCOUNT_ERROR');
   }
