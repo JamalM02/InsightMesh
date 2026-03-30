@@ -144,6 +144,10 @@ module.exports = {
                 // Override with auto-constructed Docker service URLs
                 KAFKA_URL,
                 CLICKHOUSE_URL,
+                // ClickHouse credentials come from the root .env (single source of truth
+                // shared with docker-compose.yml) — overrides whatever is in service .env
+                CLICKHOUSE_USERNAME: rootEnv.CLICKHOUSE_USER,
+                CLICKHOUSE_PASSWORD: rootEnv.CLICKHOUSE_PASSWORD,
             },
             max_memory_restart: '512M',
             restart_delay: 2000,

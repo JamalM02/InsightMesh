@@ -32,6 +32,8 @@ export const createNewAccount = async (params: {
     });
     stripeCustomerId = stripeResult.id;
 
+    // Create the account and its secret key in a single atomic DB transaction.
+    // ClickHouse is NOT part of this transaction — it must not block account creation.
     const result = await db.$transaction(async (tx) => {
       const account = await tx.account.create({
         data: {
@@ -50,15 +52,21 @@ export const createNewAccount = async (params: {
           },
         },
       });
+      return account;
+    });
 
+    // Register the app in ClickHouse AFTER the DB transaction succeeds.
+    // This is a best-effort call — ClickHouse is used for analytics only
+    // and a failure here must not prevent account creation.
+    try {
       await clickhouse.createApp({
         appId: params.id,
         name: params.name,
         slug: params.slug,
       });
-
-      return account;
-    });
+    } catch (clickhouseError) {
+      logger.error('Failed to register app in ClickHouse (account was created successfully):', clickhouseError);
+    }
 
     return result;
   } catch (error) {
